@@ -1,0 +1,70 @@
+@prefix : <http://example.org/> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:additionalCsvSource a rml:InputLogicalSource ;
+    rml:referenceFormulation rml:CSV ;
+    rml:source [ a rml:RelativePathSource,
+                rml:Source ;
+            rml:path "people2.csv" ;
+            rml:root rml:MappingDirectory ] .
+
+:additionalCsvView a rml:InputLogicalSource ;
+    rml:referenceFormulation rml:CSV ;
+    rml:source [ a rml:RelativePathSource,
+                rml:Source ;
+            rml:null "" ;
+            rml:path "./view1.csv" ;
+            rml:root rml:MappingDirectory ] .
+
+:csvSource a rml:InputLogicalSource ;
+    rml:referenceFormulation rml:CSV ;
+    rml:source [ a rml:RelativePathSource,
+                rml:Source ;
+            rml:path "people.csv" ;
+            rml:root rml:MappingDirectory ] .
+
+:jsonSource a rml:InputLogicalSource ;
+    rml:iterator "$.people[*]" ;
+    rml:referenceFormulation rml:JSONPath ;
+    rml:source [ a rml:RelativePathSource,
+                rml:Source ;
+            rml:path "people.json" ;
+            rml:root rml:MappingDirectory ] .
+
+:jsonView a rml:InputLogicalSource ;
+    rml:referenceFormulation rml:CSV ;
+    rml:source [ a rml:RelativePathSource,
+                rml:Source ;
+            rml:null "" ;
+            rml:path "./view0.csv" ;
+            rml:root rml:MappingDirectory ] .
+
+:triplesMapPerson a rml:TriplesMap ;
+    rml:logicalSource :csvView ;
+    rml:predicateObjectMap [ rml:objectMap [ rml:reference "name" ] ;
+            rml:predicate :hasName ],
+        [ rml:objectMap [ rml:datatype xsd:gYear ;
+                    rml:reference "birthyear" ] ;
+            rml:predicate :hasBirthyear ],
+        [ rml:objectMap [ rml:parentTriplesMap :triplesMapItem ] ;
+            rml:predicate :hasItem ] ;
+    rml:subjectMap [ rml:template "http://example.org/people/{id}" ] .
+
+:triplesMapItem a rml:TriplesMap ;
+    rml:logicalSource :csvView ;
+    rml:predicateObjectMap [ rml:objectMap [ rml:reference "item_type" ] ;
+            rml:predicate :hasType ],
+        [ rml:objectMap [ rml:datatype xsd:integer ;
+                    rml:reference "item_weight" ] ;
+            rml:predicate :hasWeight ] ;
+    rml:subjectMap [ rml:template "http://example.org/item_{#}_{item_type.#}" ] .
+
+:csvView a rml:InputLogicalSource ;
+    rml:referenceFormulation rml:CSV ;
+    rml:source [ a rml:RelativePathSource,
+                rml:Source ;
+            rml:null "" ;
+            rml:path "./view2.csv" ;
+            rml:root rml:MappingDirectory ] .
+

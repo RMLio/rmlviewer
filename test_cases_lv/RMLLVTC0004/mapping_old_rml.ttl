@@ -5,13 +5,13 @@
 @prefix rr: <http://www.w3.org/ns/r2rml#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-:jsonSource a rml:LogicalSource ;
+:jsonSource a rml:InputLogicalSource ;
   rml:source "./RMLLVTC0004/people.json" ;
   rml:referenceFormulation rml:JSONPath ;
   rml:iterator "$.people[*]" .
 
 :jsonView a rml:LogicalView ;
-  rml:onLogicalSource :jsonSource ;
+  rml:viewOn :jsonSource ;
   rml:field [
     rml:fieldName "name" ;
     rml:reference "$.name" ;
@@ -29,12 +29,12 @@
     ] ;
   ] .
 
-:csvSource a rml:LogicalSource ;
+:csvSource a rml:InputLogicalSource ;
   rml:source "./RMLLVTC0004/people.csv" ;
   rml:referenceFormulation rml:CSV .
 
 :csvView a rml:LogicalView ;
-  rml:onLogicalSource :csvSource ;
+  rml:viewOn :csvSource ;
   rml:field [
     rml:fieldName "name" ;
     rml:reference "name" ;

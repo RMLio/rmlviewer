@@ -5,13 +5,13 @@
 @prefix ql: <http://semweb.mmlab.be/ns/ql#> .
 @prefix : <http://example.org/> .
 
-:jsonSource a rml:LogicalSource ;
+:jsonSource a rml:InputLogicalSource ;
   rml1:source "./RMLLVTC0003/people.json" ;
   rml:referenceFormulation ql:JSONPath ;
   rml:iterator "$.people[*]" .
 
 :jsonView a rml:LogicalView ;
-  rml:onLogicalSource :jsonSource ;
+  rml:viewOn :jsonSource ;
   rml:field [
     rml:fieldName "name" ;
     rml:reference "$.name" ;
@@ -29,12 +29,12 @@
     ] ;
   ] .
 
-:csvSource a rml:LogicalSource ;
+:csvSource a rml:InputLogicalSource ;
   rml1:source "./RMLLVTC0003/people.csv" ;
   rml1:referenceFormulation ql:CSV .
 
 :csvView a rml:LogicalView ;
-  rml:onLogicalSource :csvSource ;
+  rml:viewOn :csvSource ;
   rml:field [
     rml:fieldName "name" ;
     rml:reference "name" ;

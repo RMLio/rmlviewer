@@ -17,7 +17,7 @@ def runTests():
     ViewToCsvConvertor('./test_cases/POCLV0004/mapping.ttl', './test_cases/POCLV0004/output/').execute()
     # csv field nested in json file
     ViewToCsvConvertor('./test_cases/POCLV0005/mapping.ttl', './test_cases/POCLV0005/output/').execute()
-    # json field nesting to level 2
+    # json field nesting to level 2 TODO test fails
     ViewToCsvConvertor('./test_cases/POCLV0006/mapping.ttl', './test_cases/POCLV0006/output/').execute()
 runTests()
 

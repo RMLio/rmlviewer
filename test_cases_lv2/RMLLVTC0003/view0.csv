@@ -1,0 +1,4 @@
+#,name,name.#,item,item.#,item.weight,item.weight.#,item.type,item.type.#
+0,alice,0,"{""type"": ""sword"", ""weight"": 1500}",0,1500,0,sword,0
+0,alice,0,"{""type"": ""shield"", ""weight"": 2500}",1,2500,0,shield,0
+1,bob,0,"{""type"": ""flower"", ""weight"": 15}",0,15,0,flower,0

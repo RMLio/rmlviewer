@@ -2,7 +2,7 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix : <http://example.org/> .
 
-:jsonSource a rml:LogicalSource ;
+:jsonSource a rml:InputLogicalSource ;
   rml:source [
     a rml:RelativePathSource , rml:Source ;
     rml:root rml:MappingDirectory ;
@@ -30,7 +30,7 @@
     ] ;
   ] .
 
-:csvSource a rml:LogicalSource ;
+:csvSource a rml:InputLogicalSource ;
   rml:source [
     a rml:RelativePathSource , rml:Source ;
     rml:root rml:MappingDirectory ;

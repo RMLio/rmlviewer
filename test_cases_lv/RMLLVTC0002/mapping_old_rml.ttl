@@ -5,13 +5,13 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix : <http://example.org/> .
 
-:jsonSource a rml:LogicalSource ;
+:jsonSource a rml:InputLogicalSource ;
   rml1:source "./RMLLVTC0002/people.json" ;
   rml1:referenceFormulation ql:JSONPath ;
   rml1:iterator "$.people[*]" .
 
 :jsonView a rml:LogicalView ;
-  rml:onLogicalSource :jsonSource ;
+  rml:viewOn :jsonSource ;
   rml:field [
     rml:fieldName "name" ;
     rml:reference "$.name" ;

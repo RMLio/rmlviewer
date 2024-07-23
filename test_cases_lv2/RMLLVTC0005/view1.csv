@@ -1,0 +1,4 @@
+name,birthyear,#,name.#,birthyear.#,item_weight,item_type,item_type.#,item_weight.#
+alice,1995,0,0,0,1500,sword,0,0
+alice,1995,0,0,0,2500,shield,1,1
+bob,1999,1,0,0,15,flower,0,0

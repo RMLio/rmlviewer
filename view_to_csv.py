@@ -10,7 +10,7 @@ from collections import defaultdict
 from io import StringIO
 
 import pandas as pd
-from rdflib import Graph, Literal
+from rdflib import Graph, Literal,BNode
 
 import util
 from namespaces import *
@@ -62,7 +62,7 @@ class ViewToCsvConvertor:
         field_results = self.g.query(queries.fields)
         for row in field_results:
             self.fields.setdefault(row.Field, {'id': row.Field, 'name': row.Name.value, 'parent': row.Parent,
-                                               'children': set(), 'reference_formulation': None})
+                                               'children': set(), 'reference_formulation': None, 'iterator': None})
             if row.Parent in self.logical_views:
                 # to indicate that the parent is the root iterator
                 self.fields[row.Field]['parent'] = '<it>'
@@ -78,6 +78,8 @@ class ViewToCsvConvertor:
                 self.fields[row.Field]['children'].add(row.Child)
             if row.ReferenceFormulation:
                 self.fields[row.Field]['reference_formulation'] = row.ReferenceFormulation
+            if row.Iterator:
+                self.fields[row.Field]['iterator'] = row.Iterator
 
         source_results = self.g.query(queries.sources)
         for row in source_results:
@@ -101,16 +103,14 @@ class ViewToCsvConvertor:
             for field in self.logical_views[row.LogicalView]['fields']:
                 # add the first level add the reference formulation of the logical source
                 if not self.fields[field]['reference_formulation']:
-                    self.fields[field]['reference_formulation'] = self.logical_sources[row.LogicalSource][
-                        'reference_formulation']
+                    self.fields[field]['reference_formulation'] = self.logical_sources[row.LogicalSource]['reference_formulation']
                 # add nested fields
                 for new_field in self.fields[field]['children']:
                     nested_fields.append(new_field)
             while nested_fields:
                 field = nested_fields.pop(0)
                 if not self.fields[field]['reference_formulation']:
-                    self.fields[field]['reference_formulation'] = self.fields[self.fields[field]['parent']][
-                        'reference_formulation']
+                    self.fields[field]['reference_formulation'] = self.fields[self.fields[field]['parent']]['reference_formulation']
                 for new_field in self.fields[field]['children']:
                     nested_fields.append(new_field)
             if row.Join:
@@ -177,8 +177,6 @@ class ViewToCsvConvertor:
             join = self.joins[join_key]
             parent_logical_view = self.logical_views[join['parent_logical_view']]
             fields_parent = get_fields_for_renaming(join['fields'], self.fields)
-            # add '.#'
-
             join_conditions = join['join_conditions']
             join_values_left = []
             join_values_right = []
@@ -204,11 +202,24 @@ class ViewToCsvConvertor:
             for col in parent_df.columns:
                 if col not in list(fields_parent.values()) + join_values_right_suffixed:
                     del parent_df[col]
+
+            # groupby on parent join keys > we need lists to add the indexes after the join
+            parent_df = parent_df.groupby(join_values_right_suffixed).agg(pd.Series.tolist).reset_index()
+            # add index
+            for field_name in fields_parent.values() :
+                parent_df[field_name + '.#'] = parent_df[field_name].apply(add_iteration_index)
+            explode_list = parent_df.columns.tolist()
+            for column in explode_list:
+                if column in join_values_right_suffixed:
+                    explode_list.remove(column)
+            parent_df = parent_df.explode(explode_list)
+
+
+
             # join
             df = pd.merge(df, parent_df, left_on=join_values_left, right_on=join_values_right_suffixed,
                           how=join['join_type'], suffixes=('', '_parent'))
 
-            # delete the fields from the parent view that where only needed for the join conditions
             for join_value_right_suffixed in join_values_right_suffixed:
                 del df[join_value_right_suffixed]
 
@@ -266,9 +277,8 @@ class ViewToCsvConvertor:
         field_parent = self.fields[field]['parent']
         field_parent_name = self.fields[field_parent]['name']
         df[field_name] = df[field_parent_name].apply(get_iterations_jsonpath, jsonpath=field_jsonpath)
-       # df[field_name + '.#'] = df[field_name].apply(add_iteration_index)
-       # df = df.explode([field_name, field_name + '.#'])
-        df = df.explode(field_name)
+        df[field_name + '.#'] = df[field_name].apply(add_iteration_index)
+        df = df.explode([field_name, field_name + '.#'])
         return df
 
     def add_field_csv(self, df, field):
@@ -282,7 +292,7 @@ class ViewToCsvConvertor:
             return df[reference].tolist()
 
         df[field_name] = df[field_parent_name].apply(lambda x: read_csv_value(x, field_reference))
-       # df[field_name + '.#'] = df[field_name].apply(add_iteration_index)
+        df[field_name + '.#'] = df[field_name].apply(add_iteration_index)
         return df
 
     def add_siblings_csv(self, df, siblings):
@@ -290,7 +300,7 @@ class ViewToCsvConvertor:
         for sibling in siblings:
             self.add_field_csv(df, sibling)
             sibling_names.append(self.fields[sibling]['name'])
-           # sibling_names.append(self.fields[sibling]['name'] + '.#')
+            sibling_names.append(self.fields[sibling]['name'] + '.#')
         df = df.explode(list(sibling_names), ignore_index=True)
         return df
 
@@ -300,16 +310,15 @@ class ViewToCsvConvertor:
         expr = jp.parse(iterator)
         data = [{'<it>': m.value} for m in expr.find(document)]
         df = pd.DataFrame(data)
-       # df['#'] = df.index
+        df['#'] = df.index
         view_fields = logical_view['fields']
         child_fields = []
         for field in view_fields:
             field_name = self.fields[field]['name']
             jsonpath = jp.parse(self.fields[field]['reference'])
             df[field_name] = df['<it>'].apply(get_iterations_jsonpath, jsonpath=jsonpath)
-            #df[field_name + '.#'] = df[field_name].apply(add_iteration_index)
-            #df = df.explode([field_name, field_name + '.#'])
-            df = df.explode(field_name)
+            df[field_name + '.#'] = df[field_name].apply(add_iteration_index)
+            df = df.explode([field_name, field_name + '.#'])
             if self.fields[field]['children']:
                 child_fields.append(self.fields[field]['children'])
         df = self.add_fields(df, child_fields)
@@ -321,19 +330,19 @@ class ViewToCsvConvertor:
         child_fields = []
         converted_fields = {}
         for field in fields_to_be_added:
-            converted_fields[self.fields[field]['name']] = self.fields[field]['reference']
+            converted_fields[self.fields[field]['reference']] = self.fields[field]['name']
             if self.fields[field]['children']:
                 child_fields.append(self.fields[field]['children'])
        # not sure about conversion to str, however in GTFS problems with irregular datatypes
         types = defaultdict(lambda: str)
-        df = pd.read_csv(source, sep=',', usecols=list(converted_fields.values()), dtype=types)
+        df = pd.read_csv(source, sep=',', usecols=list(converted_fields.keys()), dtype=types)
         #df = pd.read_csv(source, sep=',', usecols=list(converted_fields.values()))
         df.rename(columns=converted_fields, inplace=True)
-       # df['#'] = df.index
-        #for converted_field in converted_fields:
-            #df[converted_field + '.#'] = df.index
+        df['#'] = df.index
+        for converted_field in converted_fields.values():
+            df[converted_field + '.#'] = df.index
             # for csv: always single value so index is 0
-            #df[converted_field + '.#'] = 0
+            df[converted_field + '.#'] = 0
         df = self.add_fields(df, list(child_fields))
         return df
 
@@ -355,13 +364,18 @@ class ViewToCsvConvertor:
                 self.g.add(
                     (materialized_logical_view, RML['source'],
                      Literal(self.materialized_logical_views[materialized_logical_view])))
+                ## no solution yet implemented for handling null values for CSV in old RML
             else:
-                self.g.add((materialized_logical_view, RDF['type'], RML2['LogicalSource']))
+                self.g.add((materialized_logical_view, RDF['type'], RML2['InputLogicalSource']))
                 self.g.add((materialized_logical_view, RML2['referenceFormulation'], RML2['CSV']))
-                self.g.add(
-                    (materialized_logical_view, RML2['source'],
-                     Literal(self.materialized_logical_views[materialized_logical_view])))
-
+                source_node = BNode()
+                self.g.add((materialized_logical_view, RML2['source'], source_node))
+                self.g.add((source_node, RDF['type'], RML2['Source']))
+                self.g.add((source_node, RDF['type'], RML2['RelativePathSource']))
+                self.g.add((source_node, RML2['root'], RML2['MappingDirectory']))
+                self.g.add((source_node, RML2['path'], Literal(self.materialized_logical_views[materialized_logical_view])))
+                #acc to RML-IO spec "" is not automatically a null value for CSV
+                self.g.add((source_node, RML2['null'], Literal("")))
         # remove view related triples
         for field in self.fields:
             self.g.remove((field, None, None))

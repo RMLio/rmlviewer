@@ -6,7 +6,7 @@
 @prefix rml1: <http://semweb.mmlab.be/ns/rml#> .
 @prefix rr: <http://www.w3.org/ns/r2rml#> .
 
-:jsonSource a rml1:LogicalSource ;
+:jsonSource a rml1:InputLogicalSource ;
     rml1:iterator "$.entries[*]" ;
     rml1:referenceFormulation ql:JSONPath ;
     rml1:source "./use_cases/Telefonica/data.json" .
@@ -15,9 +15,9 @@
     rml:logicalSource :jsonView ;
     rr:predicateObjectMap [ rr:objectMap [ rr:constant org:Membership ] ;
             rr:predicate rdf:type ] ;
-    rr:subjectMap [ rr:template "http:example.com/{cn}_{memberUid}" ] .
+    rr:subjectMap [ rr:template "http:example.org/{cn}_{memberUid}" ] .
 
-:jsonView a rml1:LogicalSource ;
+:jsonView a rml1:InputLogicalSource ;
     rml1:referenceFormulation ql:CSV ;
     rml1:source "./use_cases/Telefonica/output2/view0.csv" .
 

@@ -1,0 +1,3 @@
+name,items
+alice,"{""items"":[{""type"":""sword"",""weight"":1500},{""type"":""shield"",""weight"":2500}]}"
+bob,"{""items"":[{""type"":""flower"",""weight"":15}]}"
