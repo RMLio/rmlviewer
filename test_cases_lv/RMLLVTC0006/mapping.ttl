@@ -20,7 +20,7 @@
     rml:fieldName "item" ;
     rml:reference "items" ;
     rml:referenceFormulation rml:JSONPath ;
-    rml:iterator "$.items[*]" ;
+    rml:iterator "$[*]" ;
     rml:field [
       rml:fieldName "type" ;
       rml:reference "$.type" ; ] ;

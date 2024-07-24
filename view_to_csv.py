@@ -249,15 +249,19 @@ class ViewToCsvConvertor:
         if fields_to_be_added:
             siblings = fields_to_be_added.pop(0)
             siblings = list(siblings)
-            first_sibling = siblings[0]
-            new_field_parent = self.fields[first_sibling]['parent']
+            new_field_parent = self.fields[siblings[0]]['parent']
             new_field_parent_reference_formulation = self.fields[new_field_parent]['reference_formulation']
-            for sibling in siblings:
-                self.fields[sibling]['name'] = self.fields[new_field_parent]['name'] + '.' + self.fields[sibling]['name']
-                if self.fields[sibling]['children']:
-                    fields_to_be_added.append(self.fields[sibling]['children'])
+            fields_to_be_added_siblings, converted_fields = self.get_info_from_siblings(siblings, True)
+            if fields_to_be_added_siblings:
+                fields_to_be_added = fields_to_be_added + fields_to_be_added_siblings
+            new_field_parent_name = self.fields[new_field_parent]['name']
             if 'JSONPath' in new_field_parent_reference_formulation:
-                new_field_parent_name = self.fields[new_field_parent]['name']
+                # if iterator, first apply iterator to parent
+                if self.fields[new_field_parent]['iterator']:
+                    expr = jp.parse(self.fields[new_field_parent]['iterator'])
+                    df[new_field_parent_name] = df[new_field_parent_name].apply(get_iterations_jsonpath, jsonpath=expr)
+                    df[new_field_parent_name + '.#'] = df[new_field_parent_name].apply(add_iteration_index)
+                    df = df.explode([new_field_parent_name, new_field_parent_name + '.#'])
                 for sibling in siblings:
                     df = self.add_field_json(df, sibling)
                 def dump_if_not_str(x):
@@ -266,16 +270,18 @@ class ViewToCsvConvertor:
                     return x
                 df[new_field_parent_name] = df[new_field_parent_name].apply(dump_if_not_str)
             if 'CSV' in new_field_parent_reference_formulation:
-                df = self.add_siblings_csv(df, siblings)
+                df = self.add_siblings_csv(df, siblings, new_field_parent)
             return self.add_fields(df, fields_to_be_added)
         else:
             return df
 
-    def add_field_json(self, df, field):
+    def add_field_json(self, df, field, nested_field=True):
         field_name = self.fields[field]['name']
         field_jsonpath = jp.parse(self.fields[field]['reference'])
-        field_parent = self.fields[field]['parent']
-        field_parent_name = self.fields[field_parent]['name']
+        field_parent_name = '<it>'
+        if nested_field:
+            field_parent = self.fields[field]['parent']
+            field_parent_name = self.fields[field_parent]['name']
         df[field_name] = df[field_parent_name].apply(get_iterations_jsonpath, jsonpath=field_jsonpath)
         df[field_name + '.#'] = df[field_name].apply(add_iteration_index)
         df = df.explode([field_name, field_name + '.#'])
@@ -292,16 +298,20 @@ class ViewToCsvConvertor:
             return df[reference].tolist()
 
         df[field_name] = df[field_parent_name].apply(lambda x: read_csv_value(x, field_reference))
-        df[field_name + '.#'] = df[field_name].apply(add_iteration_index)
         return df
 
-    def add_siblings_csv(self, df, siblings):
+    def add_siblings_csv(self, df, siblings, parent):
         sibling_names = []
         for sibling in siblings:
             self.add_field_csv(df, sibling)
             sibling_names.append(self.fields[sibling]['name'])
-            sibling_names.append(self.fields[sibling]['name'] + '.#')
-        df = df.explode(list(sibling_names), ignore_index=True)
+        parent_name = self.fields[parent]['name']
+        # split in lines and remove headers
+        df[parent_name] = df[parent_name].apply(lambda x: x.splitlines()[1:])
+        df[parent_name + '.#'] = df[parent_name].apply(add_iteration_index)
+        df = df.explode([parent_name, parent_name + '.#', *sibling_names], ignore_index=True)
+        for name in sibling_names:
+            df[name + '.#'] = 0
         return df
 
     def make_view_from_json(self, source, iterator, logical_view):
@@ -312,20 +322,53 @@ class ViewToCsvConvertor:
         df = pd.DataFrame(data)
         df['#'] = df.index
         view_fields = logical_view['fields']
-        child_fields = []
+        fields_to_be_added = []
         for field in view_fields:
-            field_name = self.fields[field]['name']
-            jsonpath = jp.parse(self.fields[field]['reference'])
-            df[field_name] = df['<it>'].apply(get_iterations_jsonpath, jsonpath=jsonpath)
-            df[field_name + '.#'] = df[field_name].apply(add_iteration_index)
-            df = df.explode([field_name, field_name + '.#'])
+            df = self.add_field_json(df, field, False)
+            #field_name = self.fields[field]['name']
+            #jsonpath = jp.parse(self.fields[field]['reference'])
+            #df[field_name] = df['<it>'].apply(get_iterations_jsonpath, jsonpath=jsonpath)
+            #df[field_name + '.#'] = df[field_name].apply(add_iteration_index)
+            #df = df.explode([field_name, field_name + '.#'])
             if self.fields[field]['children']:
-                child_fields.append(self.fields[field]['children'])
-        df = self.add_fields(df, child_fields)
+                fields_to_be_added.append(self.fields[field]['children'])
+        df = self.add_fields(df, fields_to_be_added)
         df = df.drop('<it>', axis=1)
         return df
 
+
+    def get_info_from_siblings(self, siblings, nested=False):
+        fields_to_be_added = []
+        converted_fields = {}
+        if nested:
+            parent = self.fields[siblings[0]]['parent']
+            for sibling in siblings:
+                self.fields[sibling]['name'] = self.fields[parent]['name'] + '.' + self.fields[sibling]['name']
+        for sibling in siblings:
+            converted_fields[self.fields[sibling]['reference']] = self.fields[sibling]['name']
+            if self.fields[sibling]['children']:
+                fields_to_be_added.append(self.fields[sibling]['children'])
+        return fields_to_be_added, converted_fields
+
+    def make_df_from_csv(self, source, converted_fields):
+        types = defaultdict(lambda: str)
+        df = pd.read_csv(source, sep=',', usecols=list(converted_fields.keys()), dtype=types)
+        df.rename(columns=converted_fields, inplace=True)
+        df['#'] = df.index
+        for converted_field_name in converted_fields.values():
+            # for csv: always single value so index is 0
+            df[converted_field_name + '.#'] = 0
+        return df
+
     def make_view_from_csv(self, source, logical_view):
+        siblings = logical_view['fields']
+        fields_to_be_added, converted_fields = self.get_info_from_siblings(siblings)
+        df = self.make_df_from_csv(source, converted_fields)
+        df = self.add_fields(df, list(fields_to_be_added))
+        return df
+
+    # TODO DELETE
+    def make_view_from_csv2(self, source, logical_view):
         fields_to_be_added = logical_view['fields']
         child_fields = []
         converted_fields = {}

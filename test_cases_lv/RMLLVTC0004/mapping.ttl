@@ -12,7 +12,7 @@
   rml:iterator "$.people[*]" .
 
 :jsonView a rml:LogicalView ;
-  rml:source :jsonSource ;
+  rml:viewOn :jsonSource ;
   rml:field [
     rml:fieldName "name" ;
     rml:reference "$.name" ;
@@ -39,7 +39,7 @@
   rml:referenceFormulation rml:CSV .
 
 :csvView a rml:LogicalView ;
-  rml:source :csvSource ;
+  rml:viewOn :csvSource ;
   rml:field [
     rml:fieldName "name" ;
     rml:reference "name" ;
