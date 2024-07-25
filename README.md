@@ -47,8 +47,8 @@ options:
 ## Examples
 
 Examples of mapping rules that can be handled with this implementation, can be found in the test cases and use cases.
-- [Test cases](./test_cases): see mapping.ttl
-- [Test cases from the RML Logical Views module](./test_cases_lv): see mapping_old_rml.ttl (converted to the old rml terms to enable processing with RMLMapper v6.5.1)
-- [Use cases](./use_cases): see mapping.ttl
+- [Test cases](./test_cases)
+- [Test cases from the RML Logical Views module](./test_cases_lv)
+- [Use cases](./use_cases)
 
 
