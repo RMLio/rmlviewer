@@ -10,7 +10,7 @@ from collections import defaultdict
 from io import StringIO
 
 import pandas as pd
-from rdflib import Graph, Literal,BNode
+from rdflib import Graph, Literal, BNode
 
 import util
 from namespaces import *
@@ -24,7 +24,8 @@ class ViewToCsvConvertor:
     Also Materializes the views as CSV files.
     """
 
-    def __init__(self, mapping: str, output_dir: str, old_rml: bool = False, optimize: bool = False, no_ref_object_map: bool = False):
+    def __init__(self, mapping: str, output_dir: str, old_rml: bool = False, optimize: bool = False,
+                 no_ref_object_map: bool = False):
         """Create an instance of the ViewToCsvConvertor class.
 
         Parameters
@@ -103,21 +104,26 @@ class ViewToCsvConvertor:
             for field in self.logical_views[row.LogicalView]['fields']:
                 # add the first level add the reference formulation of the logical source
                 if not self.fields[field]['reference_formulation']:
-                    self.fields[field]['reference_formulation'] = self.logical_sources[row.LogicalSource]['reference_formulation']
+                    self.fields[field]['reference_formulation'] = self.logical_sources[row.LogicalSource][
+                        'reference_formulation']
                 # add nested fields
                 for new_field in self.fields[field]['children']:
                     nested_fields.append(new_field)
             while nested_fields:
                 field = nested_fields.pop(0)
                 if not self.fields[field]['reference_formulation']:
-                    self.fields[field]['reference_formulation'] = self.fields[self.fields[field]['parent']]['reference_formulation']
+                    self.fields[field]['reference_formulation'] = self.fields[self.fields[field]['parent']][
+                        'reference_formulation']
                 for new_field in self.fields[field]['children']:
                     nested_fields.append(new_field)
             if row.Join:
                 self.logical_views[row.LogicalView]['joins'].add(row.Join)
             if self.optimize:
-                self.logical_views[row.LogicalView]['used_references'] = util.get_all_references_per_view(self.g, row.LogicalView)
-                self.logical_views[row.LogicalView]['remove_duplicates'] = util.safe_removal_of_duplicates(self.g, row.LogicalView)
+                self.logical_views[row.LogicalView]['used_references'] = util.get_all_references_per_view(self.g,
+                                                                                                          row.LogicalView)
+                self.logical_views[row.LogicalView]['remove_duplicates'] = util.safe_removal_of_duplicates(self.g,
+                                                                                                           row.LogicalView)
+
         def add_join(_row, _join_type):
             # join type according to the keys in pandas merge: left_join = 'left', inner_join = 'inner'
             self.joins.setdefault(_row.Join, {'child_logical_view': _row.ChildLogicalView,
@@ -206,15 +212,13 @@ class ViewToCsvConvertor:
             # groupby on parent join keys > we need lists to add the indexes after the join
             parent_df = parent_df.groupby(join_values_right_suffixed).agg(pd.Series.tolist).reset_index()
             # add index
-            for field_name in fields_parent.values() :
+            for field_name in fields_parent.values():
                 parent_df[field_name + '.#'] = parent_df[field_name].apply(add_iteration_index)
             explode_list = parent_df.columns.tolist()
             for column in explode_list:
                 if column in join_values_right_suffixed:
                     explode_list.remove(column)
             parent_df = parent_df.explode(explode_list)
-
-
 
             # join
             df = pd.merge(df, parent_df, left_on=join_values_left, right_on=join_values_right_suffixed,
@@ -233,7 +237,7 @@ class ViewToCsvConvertor:
 
         # at the end one more check to remove unnecessary field and duplicates
         if self.optimize:
-        # after every join: remove unnecessary fields and duplicate
+            # after every join: remove unnecessary fields and duplicate
             for col in df.columns:
                 if col not in logical_view['used_references']:
                     del df[col]
@@ -264,10 +268,12 @@ class ViewToCsvConvertor:
                     df = df.explode([new_field_parent_name, new_field_parent_name + '.#'])
                 for sibling in siblings:
                     df = self.add_field_json(df, sibling)
+
                 def dump_if_not_str(x):
                     if not isinstance(x, str):
                         x = json.dumps(x)
                     return x
+
                 df[new_field_parent_name] = df[new_field_parent_name].apply(dump_if_not_str)
             if 'CSV' in new_field_parent_reference_formulation:
                 df = self.add_siblings_csv(df, siblings, new_field_parent)
@@ -325,17 +331,16 @@ class ViewToCsvConvertor:
         fields_to_be_added = []
         for field in view_fields:
             df = self.add_field_json(df, field, False)
-            #field_name = self.fields[field]['name']
-            #jsonpath = jp.parse(self.fields[field]['reference'])
-            #df[field_name] = df['<it>'].apply(get_iterations_jsonpath, jsonpath=jsonpath)
-            #df[field_name + '.#'] = df[field_name].apply(add_iteration_index)
-            #df = df.explode([field_name, field_name + '.#'])
+            # field_name = self.fields[field]['name']
+            # jsonpath = jp.parse(self.fields[field]['reference'])
+            # df[field_name] = df['<it>'].apply(get_iterations_jsonpath, jsonpath=jsonpath)
+            # df[field_name + '.#'] = df[field_name].apply(add_iteration_index)
+            # df = df.explode([field_name, field_name + '.#'])
             if self.fields[field]['children']:
                 fields_to_be_added.append(self.fields[field]['children'])
         df = self.add_fields(df, fields_to_be_added)
         df = df.drop('<it>', axis=1)
         return df
-
 
     def get_info_from_siblings(self, siblings, nested=False):
         fields_to_be_added = []
@@ -376,10 +381,10 @@ class ViewToCsvConvertor:
             converted_fields[self.fields[field]['reference']] = self.fields[field]['name']
             if self.fields[field]['children']:
                 child_fields.append(self.fields[field]['children'])
-       # not sure about conversion to str, however in GTFS problems with irregular datatypes
+        # not sure about conversion to str, however in GTFS problems with irregular datatypes
         types = defaultdict(lambda: str)
         df = pd.read_csv(source, sep=',', usecols=list(converted_fields.keys()), dtype=types)
-        #df = pd.read_csv(source, sep=',', usecols=list(converted_fields.values()))
+        # df = pd.read_csv(source, sep=',', usecols=list(converted_fields.values()))
         df.rename(columns=converted_fields, inplace=True)
         df['#'] = df.index
         for converted_field in converted_fields.values():
@@ -416,8 +421,9 @@ class ViewToCsvConvertor:
                 self.g.add((source_node, RDF['type'], RML2['Source']))
                 self.g.add((source_node, RDF['type'], RML2['RelativePathSource']))
                 self.g.add((source_node, RML2['root'], RML2['MappingDirectory']))
-                self.g.add((source_node, RML2['path'], Literal(self.materialized_logical_views[materialized_logical_view])))
-                #acc to RML-IO spec "" is not automatically a null value for CSV
+                self.g.add(
+                    (source_node, RML2['path'], Literal(self.materialized_logical_views[materialized_logical_view])))
+                # acc to RML-IO spec "" is not automatically a null value for CSV
                 self.g.add((source_node, RML2['null'], Literal("")))
         # remove view related triples
         for field in self.fields:
@@ -473,6 +479,7 @@ if __name__ == '__main__':
         print(f'No mapping file provided. Provide mapping file after option "--mapping".', file=sys.stderr)
         sys.exit(EXIT_CODE_NO_MAPPING)
     else:
-        convertor = ViewToCsvConvertor(args.mapping, args.output_dir, args.old_rml, args.optimize, args.no_ref_object_map)
+        convertor = ViewToCsvConvertor(args.mapping, args.output_dir, args.old_rml, args.optimize,
+                                       args.no_ref_object_map)
         convertor.execute()
         sys.exit(EXIT_CODE_SUCCESS)

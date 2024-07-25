@@ -1,4 +1,0 @@
-#,name,name.#,items,items.#,items.type,items.weight,items.type.#,items.weight.#
-0,alice,0,"sword,1500",0,sword,1500,0,0
-0,alice,0,"shield,2500",1,shield,2500,0,0
-1,bob,0,"flower,15",0,flower,15,0,0

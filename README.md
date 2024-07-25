@@ -38,6 +38,7 @@ options:
 - Flattening of nested data structures
 - Handling of mixed data formats
 - Extended joining of data sources  
+- Field indexes
 
 ## Supported data formats
 - CSV 

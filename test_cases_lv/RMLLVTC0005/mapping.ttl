@@ -92,7 +92,8 @@
 :triplesMapItem a rml:TriplesMap ;
   rml:logicalSource :csvView ;
   rml:subjectMap [
-    rml:template "http://example.org/item_{#}_{item_type.#}" ;
+    rml:template "item_{#}_{item_type.#}" ;
+    rml:termType rml:BlankNode ;
   ] ;
   rml:predicateObjectMap [
     rml:predicate :hasType ;

@@ -18,7 +18,7 @@
       rml:reference "$.name" ;
     ] ;
   rml:field [
-    rml:fieldName "items" ;
+    rml:fieldName "item" ;
     rml:reference "$.items" ;
     rml:referenceFormulation rml:CSV;
     rml:field [
@@ -34,18 +34,18 @@
 :triplesMapItem a rml:TriplesMap ;
   rml:logicalSource :mixedJSONView ;
   rml:subjectMap [
-    rml:template "http://example.org/item_{#}_{items.#}" ;
+    rml:template "http://example.org/item_{#}_{item.#}" ;
   ] ;
   rml:predicateObjectMap [
     rml:predicate :hasType ;
     rml:objectMap [
-      rml:reference "items.type" ;
+      rml:reference "item.type" ;
     ] ;
   ] ;
   rml:predicateObjectMap [
     rml:predicate :hasWeight ;
     rml:objectMap [
-      rml:reference "items.weight" ;
+      rml:reference "item.weight" ;
       rml:datatype xsd:integer ;
     ] ;
   ] .
