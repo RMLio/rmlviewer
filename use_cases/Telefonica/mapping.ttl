@@ -1,7 +1,7 @@
 @prefix rml: <http://w3id.org/rml/> .
 @prefix : <http://example.org/> .
 
-:jsonSource a rml:InputLogicalSource ;
+:jsonSource a rml:LogicalSource ;
   rml:referenceFormulation rml:JSONPath ;
   rml:iterator "$.entries[*]" ;
   rml:source [
