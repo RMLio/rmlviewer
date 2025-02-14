@@ -7,7 +7,7 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix org: <http://www.w3.org/ns/org#>.
 
-:jsonSource a rml1:InputLogicalSource ;
+:jsonSource a rml1:LogicalSource ;
   rml1:source "./use_cases/Telefonica/data.json" ;
   rml1:referenceFormulation ql:JSONPath ;
   rml1:iterator "$.entries[*]" .

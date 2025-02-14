@@ -6,17 +6,15 @@ function testing () {
   echo $1
   python ../../view_to_csv.py --mapping mapping.ttl
   java -jar ../burp.jar -m ./mapping_without_views.ttl -o ./output_test.nq
-  python ../compare.py output.nq output_test.nq
+  #java -jar ../rmlmapper.jar -m ./mapping_without_views.ttl -o ./output_test.nq
+  result=`python ../compare.py output.nq output_test.nq`
+  echo  "|" $dir "|" $result "|">> ../result.md
   rm view* mapping_without_views.ttl output_test.nq
   cd ..
 }
 
-testing ./RMLLVTC0001
-testing ./RMLLVTC0002
-testing ./RMLLVTC0003
-testing ./RMLLVTC0004
-testing ./RMLLVTC0005
-testing ./RMLLVTC0006
-testing ./RMLLVTC0007
-testing ./RMLLVTC0008
-testing ./RMLLVTC0009
+for dir in ./*/ ;
+do
+  echo "testing $dir";
+  testing $dir
+done

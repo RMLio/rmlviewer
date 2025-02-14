@@ -1,7 +1,7 @@
 @prefix rml: <http://w3id.org/rml/> .
 @prefix : <http://example.org/> .
 
-:jsonSource a rml:InputLogicalSource ;
+:jsonSource a rml:LogicalSource ;
   rml:referenceFormulation rml:JSONPath ;
   rml:iterator "$.people[*]" ;
   rml:source [
@@ -19,14 +19,17 @@
   rml:field [
     rml:fieldName "hobbies" ;
     rml:reference "$.hobbies" ;
-    rml:referenceFormulation rml:CSV;
     rml:field [
-      rml:fieldName "type" ;
-      rml:reference "type" ;
-    ] ;
-    rml:field [
-      rml:fieldName "id" ;
-      rml:reference "id" ;
-    ] ;
+      rml:fieldName "hobbies_csv" ;
+      rml:referenceFormulation rml:CSV;
+      rml:field [
+        rml:fieldName "type" ;
+        rml:reference "type" ;
+      ] ;
+      rml:field [
+        rml:fieldName "id" ;
+        rml:reference "id" ;
+      ] ;
+    ];
   ] .
 

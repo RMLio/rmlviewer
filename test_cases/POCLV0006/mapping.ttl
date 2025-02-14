@@ -1,7 +1,7 @@
 @prefix rml: <http://w3id.org/rml/> .
 @prefix : <http://example.org/> .
 
-:jsonSource a rml:InputLogicalSource ;
+:jsonSource a rml:LogicalSource ;
   rml:referenceFormulation rml:JSONPath ;
   rml:iterator "$.people[*]" ;
   rml:source [
@@ -18,14 +18,14 @@
   ] ;
   rml:field [
     rml:fieldName "item" ;
-    rml:reference "$.items[*]" ;
+    rml:iterator "$.items[*]" ;
     rml:field [
       rml:fieldName "type" ;
       rml:reference "$.type" ;
     ] ;
     rml:field [
       rml:fieldName "measures";
-      rml:reference "$.measures";
+      rml:iterator "$.measures";
       rml:field [
         rml:fieldName "weight" ;
         rml:reference "$.weight" ;
