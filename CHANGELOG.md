@@ -7,9 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.1.0] - 2025-02-14
 
 ### Fixed
-- Adapted to new RML-LV terminology
-
-## [1.0.1] - 2024-07-25
+- Adapted to new RML-LV terminology: Iterable Field, Expression Field
 
 ### Added
 - Field indexes
