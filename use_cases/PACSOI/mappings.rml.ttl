@@ -1,0 +1,305 @@
+@base <http://example.com/>.
+@prefix oa: <http://www.w3.org/ns/oa#>.
+@prefix r3d: <http://www.re3data.org/schema/3-0#>.
+@prefix dct: <http://purl.org/dc/terms/>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix r2r: <http://www4.wiwiss.fu-berlin.de/bizer/r2r/>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix rml: <http://w3id.org/rml/>.
+@prefix moveUp: <http://moveUp.care/>.
+@prefix moveUpQuest: <http://moveUp.care/questionnaire/>.
+
+<json> a rml:LogicalSource;
+  rml:source [
+    a rml:RelativePathSource, rml:Source;
+    rml:path "observations.json";
+    rml:root rml:MappingDirectory;
+  ];
+  rml:iterator "$.[*]";
+  rml:referenceFormulation rml:JSONPath.
+
+<observationView> a rml:LogicalView;
+  rml:viewOn <json>;
+  rdfs:label "View for moveUp's observations";
+  rml:field [
+    rml:fieldName "identifiers";
+    rml:iterator "$.identifier[*]";
+    rml:field [
+      rml:fieldName "id";
+      rml:reference "$.value";
+    ];
+    rml:field [
+      rml:fieldName "system";
+      rml:reference "$.system";
+    ];
+  ];
+  rml:field [
+    rml:fieldName "status";
+    rml:reference "$.status";
+  ];
+  rml:field [
+    rml:fieldName "categories";
+    rml:iterator "$.category[*].coding[*]";
+    rml:field <codingFieldSystem>;
+    rml:field <codingFieldCode>;
+    rml:field <codingFieldDisplay>;
+  ];
+  rml:field [
+    rml:fieldName "codes";
+    rml:iterator "$.code.coding[*]";
+    rml:field <codingFieldSystem>;
+    rml:field <codingFieldCode>;
+    rml:field <codingFieldDisplay>;
+  ];
+  rml:field [
+    rml:fieldName "valueCodeableConcept";
+    rml:iterator "$.valueCodeableConcept.coding[*]";
+    rml:field <codingFieldSystem>;
+    rml:field <codingFieldCode>;
+    rml:field <codingFieldDisplay>;
+  ];
+  rml:field [
+    rml:fieldName "valueCodeableConcept.text";
+    rml:reference "$.valueCodeableConcept.text";
+  ];
+  rml:field [
+    rml:fieldName "subject";
+    rml:reference "$.subject.reference";
+  ];
+  rml:field [
+    rml:fieldName "effectiveDateTime";
+    rml:reference "$.effectiveDateTime";
+  ];
+  rml:field [
+    rml:fieldName "valueQuantity.value";
+    rml:reference "$.valueQuantity.value";
+  ];
+  rml:field [
+    rml:fieldName "valueQuantity.unit";
+    rml:reference "$.valueQuantity.unit";
+  ];
+  rml:field [
+    rml:fieldName "valueQuantity.system";
+    rml:reference "$.valueQuantity.system";
+  ];
+  rml:field [
+    rml:fieldName "valueQuantity.code";
+    rml:reference "$.valueQuantity.code";
+  ];
+  rml:field [
+    rml:fieldName "partOfs";
+    rml:iterator "$.partOf[*]";
+    rml:field [
+      rml:fieldName "reference";
+      rml:reference "$.reference";
+    ];
+    rml:field [
+      rml:fieldName "display";
+      rml:reference "$.display";
+    ];
+  ].
+
+# Field representation of the codings' JSON schmea 
+<codingFieldSystem> a rml:Field;
+  rml:fieldName "system";
+  rml:reference "$.system".
+
+<codingFieldCode> a rml:Field;
+  rml:fieldName "code";
+  rml:reference "$.code".
+
+<codingFieldDisplay> a rml:Field;
+  rml:fieldName "display";
+  rml:reference "$.display".
+
+# identifiers.id, identifiers.system, status, 
+# categories.system, categories.code, categories.display
+# codings.code, codings.system, codings.display
+# subject, effectiveDateTime,  
+# valueQuantity.value, valueQuantity.unit, valueQuantity.system,  valueQuantity.code,
+# valueCodeableConcept.code, valueCodeableConcept.system, valueCodeableConcept.display, valueCodeableConcept.text
+# partOfs.reference, partOfs.display
+<PartOfTriplesMap> a rml:TriplesMap;
+  rml:logicalSource <observationView>;
+  rml:subjectMap [ rml:template "http://moveUp.com/procedures/{partOfs.reference}" ];
+  rml:predicateObjectMap [
+    rml:predicate dct:description;
+    rml:objectMap [ rml:reference "partOfs.display" ];
+  ].
+
+<ValueQuantityTriplesMap> a rml:TriplesMap;
+  rml:logicalSource <observationView>;
+  rml:subjectMap [
+    rml:template  "{identifiers.id}-valueQuantity"; 
+    rml:termType rml:BlankNode;
+    rml:class moveUp:ValueQuantitySystem;
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:system;
+    rml:objectMap [ rml:reference "valueQuantity.system" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:code;
+    rml:objectMap [ rml:reference "valueQuantity.code" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:value;
+    rml:objectMap [ rml:reference "valueQuantity.value" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:unit;
+    rml:objectMap [ rml:reference "valueQuantity.unit" ];
+  ].
+
+<ValueCodeableConceptCodingtriplesMap> a rml:TriplesMap;
+  rml:logicalSource <observationView>;
+  rml:subjectMap [
+    rml:template "{valueCodeableConcept.system}/{valueCodeableConcept.code}";
+    rml:class moveUp:Coding;
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:system;
+    rml:objectMap [
+      rml:reference "valueCodeableConcept.system";
+      rml:termType rml:IRI;
+    ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:code;
+    rml:objectMap [ rml:reference "valueCodeableConcept.code" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate dct:description;
+    rml:objectMap [ rml:reference "valueCodeableConcept.display" ];
+  ].
+
+<ValueCodeableConceptTriplesMap> a rml:TriplesMap;
+  rml:logicalSource <observationView>;
+  rml:subjectMap [
+    rml:template "{identifiers.id}_valueCodeableConcept";
+    rml:termType rml:BlankNode;
+    rml:class moveUp:ValueCodeableConcept;
+  ];
+  rml:predicateObjectMap [
+    rml:predicate dct:description;
+    rml:objectMap [ rml:reference "valueCodeableConcept.text" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:coding;
+    rml:objectMap [ rml:parentTriplesMap <ValueCodeableConceptCodingtriplesMap> ];
+  ].
+
+<CodeCodingsTriplesMap> a rml:TriplesMap;
+  rml:logicalSource <observationView>;
+  rml:subjectMap [
+    rml:template "{codes.system}/{codes.code}";
+    rml:class moveUp:Coding;
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:system;
+    rml:objectMap [
+      rml:reference "codes.system";
+      rml:termType rml:IRI;
+    ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:code;
+    rml:objectMap [ rml:reference "codes.code" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate dct:description;
+    rml:objectMap [ rml:reference "codes.display" ];
+  ].
+
+<CodesTriplesMap> a rml:TriplesMap;
+  rml:logicalSource <observationView>;
+  rml:subjectMap [
+    rml:template "{identifiers.id}_codes";
+    rml:termType rml:BlankNode;
+    rml:class moveUp:Code;
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:coding;
+    rml:objectMap [ rml:parentTriplesMap <CodeCodingsTriplesMap> ];
+  ].
+
+<CategoryCodingsTriplesMap> a rml:TriplesMap;
+  rml:logicalSource <observationView>;
+  rml:subjectMap [
+    rml:template "{categories.system}/{categories.code}";
+    rml:class moveUp:Coding;
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:system;
+    rml:objectMap [
+      rml:reference "categories.system";
+      rml:termType rml:IRI;
+    ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:code;
+    rml:objectMap [ rml:reference "categories.code" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate dct:description;
+    rml:objectMap [ rml:reference "categories.display" ];
+  ].
+
+<CategoryTriplesMap> a rml:TriplesMap;
+  rml:logicalSource <observationView>;
+  rml:subjectMap [
+    rml:template "{identifiers.id}_category";
+    rml:termType rml:BlankNode;
+    rml:class moveUp:Category;
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:coding;
+    rml:objectMap [ rml:parentTriplesMap <CategoryCodingsTriplesMap> ];
+  ].
+
+<ObservationTriplesMap> a rml:TriplesMap;
+  rml:logicalSource <observationView>;
+  rml:subjectMap [
+    rml:template "http://moveUp.com/id/{identifiers.system}/{identifiers.id}";
+    rml:class moveUp:Observation;
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:status;
+    rml:objectMap [ rml:reference "status" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:category;
+    rml:objectMap [ rml:parentTriplesMap <CategoryTriplesMap> ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:code;
+    rml:objectMap [ rml:parentTriplesMap <CodesTriplesMap> ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:subject;
+    rml:objectMap [
+      rml:template "http://moveUp.com/patient/{subject}";
+      rml:termType rml:IRI;
+    ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:effectiveDateTime;
+    rml:objectMap [
+      rml:reference "effectiveDateTime";
+      rml:datatype xsd:dateTime;
+    ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:valueQuantity;
+    rml:objectMap [ rml:parentTriplesMap <ValueQuantityTriplesMap> ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:valueCodeableConcept;
+    rml:objectMap [ rml:parentTriplesMap <ValueCodeableConceptTriplesMap> ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:partOf;
+    rml:objectMap [ rml:parentTriplesMap <PartOfTriplesMap> ];
+  ].
+

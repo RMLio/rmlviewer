@@ -4,8 +4,22 @@ SELECT DISTINCT *
 WHERE {
     ?LogicalView a rml2:LogicalView .
     ?LogicalView rml2:viewOn ?LogicalSource .
+}"""
+
+fields_per_view = """
+prefix rml2: <http://w3id.org/rml/> 
+SELECT DISTINCT *
+WHERE {
+    ?LogicalView a rml2:LogicalView .
     ?LogicalView rml2:field ?Field .
-    OPTIONAL {?LogicalView rml2:leftJoin|rml2:innerJoin ?Join .}
+}"""
+
+joins_per_view= """
+prefix rml2: <http://w3id.org/rml/> 
+SELECT DISTINCT *
+WHERE {
+    ?LogicalView a rml2:LogicalView .
+    ?LogicalView rml2:leftJoin|rml2:innerJoin ?Join .
 }"""
 
 # get logical sources (can also be a logical view!)
@@ -38,6 +52,24 @@ WHERE {
     OPTIONAL {?Field rml2:referenceFormulation ?ReferenceFormulation .}
     OPTIONAL {?Field rml2:iterator ?Iterator .}
 }"""
+
+field_singleton_details = """
+prefix rml2: <http://w3id.org/rml/> 
+SELECT DISTINCT *
+WHERE {
+    ?Field rml2:fieldName ?Name .
+    OPTIONAL {?Field rml2:constant ?Constant .}
+    OPTIONAL {?Field rml2:reference ?Reference .}
+    OPTIONAL {?Field rml2:template ?Template .}
+    OPTIONAL {?Field rml2:referenceFormulation ?ReferenceFormulation .}
+    OPTIONAL {?Field rml2:iterator ?Iterator .}
+}"""
+
+field_children = """
+prefix rml2: <http://w3id.org/rml/> 
+SELECT DISTINCT *
+WHERE {
+    ?Field rml2:field ?Child .}"""
 
 left_joins = """
 prefix rml2: <http://w3id.org/rml/> 
