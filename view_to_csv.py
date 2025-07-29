@@ -14,6 +14,7 @@ from rdflib import Graph, Literal, BNode
 
 import util
 from namespaces import *
+from queries import joins_per_view
 from ref_object_map_to_view import ref_object_map_to_view
 from util import *
 
@@ -60,38 +61,7 @@ class ViewToCsvConvertor:
         if self.no_ref_object_map:
             ref_object_map_to_view(self.g)
             self.g.serialize(destination='./no-ref-object-map.ttl', encoding='utf-8')
-        field_results = self.g.query(queries.fields)
-        for row in field_results:
-            self.fields.setdefault(row.Field, {'id': row.Field, 'name': row.Name.value, 'parent': row.Parent,
-                                               'children': set(), 'reference_formulation': None, 'iterator': None,
-                                               'iterable': False})
-            if row.Parent in self.logical_views:
-                # to indicate that the parent is the root iterator
-                self.fields[row.Field]['parent'] = '<it>'
-            else:
-                self.fields[row.Field]['parent'] = row.Parent
-            if row.Constant:
-                self.fields[row.Field]['constant'] = row.Constant.value
-            if row.Reference:
-                self.fields[row.Field]['reference'] = row.Reference.value
-            if row.Template:
-                self.fields[row.Field]['template'] = row.Template.value
-            if row.Child:
-                self.fields[row.Field]['children'].add(row.Child)
-            if row.ReferenceFormulation:
-                self.fields[row.Field]['reference_formulation'] = row.ReferenceFormulation
-            if row.Iterator:
-                self.fields[row.Field]['iterator'] = row.Iterator
-            # add default iterator for JSON
-            if self.fields[row.Field]['reference_formulation'] \
-                and 'JSONPath' in self.fields[row.Field]['reference_formulation']  \
-                and not self.fields[row.Field]['iterator']:
-                self.fields[row.Field]['iterator'] = '$'
-            # if a field has a reference_formulation or an iterator, it is an iterable field
-            if self.fields[row.Field]['iterator'] or self.fields[row.Field]['reference_formulation'] :
-                self.fields[row.Field]['iterable'] = True
-            else:
-                self.fields[row.Field]['reference_formulation'] = 'EXPRESSION'
+
         source_results = self.g.query(queries.sources)
         for row in source_results:
             self.logical_sources.setdefault(row.LogicalSource, {'id': row.LogicalSource,
@@ -108,26 +78,78 @@ class ViewToCsvConvertor:
         for row in view_results:
             self.logical_views.setdefault(row.LogicalView, {'id': row.LogicalView, 'fields': set(), 'joins': set()})
             self.logical_views[row.LogicalView]['logical_source'] = row.LogicalSource
-            self.logical_views[row.LogicalView]['fields'].add(row.Field)
-            # add any enherited reference formulations to the fields
-            nested_fields = []
-            for field in self.logical_views[row.LogicalView]['fields']:
-                # at the first level add the reference formulation of the logical source
-                if not self.fields[field]['reference_formulation']:
-                    self.fields[field]['reference_formulation'] = self.logical_sources[row.LogicalSource][
-                        'reference_formulation']
-                # add nested fields
-                for new_field in self.fields[field]['children']:
-                    nested_fields.append(new_field)
-            while nested_fields:
-                field = nested_fields.pop(0)
-                if not self.fields[field]['reference_formulation']:
-                    self.fields[field]['reference_formulation'] = self.fields[self.fields[field]['parent']][
-                        'reference_formulation']
-                for new_field in self.fields[field]['children']:
-                    nested_fields.append(new_field)
-            if row.Join:
-                self.logical_views[row.LogicalView]['joins'].add(row.Join)
+
+        fields_per_view_results = self.g.query(queries.fields_per_view)
+        field_counter = 0
+        for row in fields_per_view_results:
+            # unique id per field, because field descriptions can be reused with different parents
+            field_unique_id = 'field' + str(field_counter)
+            field_counter += 1
+            self.logical_views[row.LogicalView]['fields'].add(field_unique_id)
+            self.fields.setdefault(field_unique_id, {'id': row.Field, 'parent': '<it>', 'name': None,
+                                                'children': set(), 'reference_formulation': None, 'iterator': None,
+                                                'iterable': False, 'reference': None, 'template': None, 'constant': None})
+
+
+
+            def add_field_details(field_unique_id, logical_view_as_parent=None):
+                field_initial_id = self.fields[field_unique_id]['id']
+                singleton_details_results = self.g.query(queries.field_singleton_details, initBindings={'Field': field_initial_id})
+                for row in singleton_details_results:
+                    self.fields[field_unique_id]['name'] = row.Name.value
+                    if row.Constant:
+                        self.fields[field_unique_id]['constant'] = row.Constant.value
+                    if row.Reference:
+                        self.fields[field_unique_id]['reference'] = row.Reference.value
+                    if row.Template:
+                        self.fields[field_unique_id]['template'] = row.Template.value
+                    if row.ReferenceFormulation:
+                        self.fields[field_unique_id]['reference_formulation'] = row.ReferenceFormulation
+                    if row.Iterator:
+                        self.fields[field_unique_id]['iterator'] = row.Iterator
+
+                # set_field_type, TODO add function values
+                self.fields[field_unique_id]['iterable'] =  (not (self.fields[field_unique_id]['reference']) and
+                                                        not (self.fields[field_unique_id]['template']) and
+                                                        not (self.fields[field_unique_id]['constant']))
+
+                # at the first level add the reference formulation of the logical source, if no reference formulation
+                if self.fields[field_unique_id]['iterable'] and not self.fields[field_unique_id]['reference_formulation']:
+                    if '<it>' in self.fields[field_unique_id]['parent']:
+                        self.fields[field_unique_id]['reference_formulation'] = self.logical_sources[self.logical_views[logical_view_as_parent]['logical_source']]['reference_formulation']
+                    else:
+                        self.fields[field_unique_id]['reference_formulation'] = self.fields[self.fields[field_unique_id]['parent']]['reference_formulation']
+
+                # add default iterator for JSON
+                if self.fields[field_unique_id]['reference_formulation'] \
+                        and 'JSONPath' in self.fields[field_unique_id]['reference_formulation'] \
+                        and not self.fields[field_unique_id]['iterator']:
+                    self.fields[field_unique_id]['iterator'] = '$'
+
+            add_field_details(field_unique_id, row.LogicalView)
+
+            #recursively add children
+            def add_children(field_unique_id):
+                field_initial_id = self.fields[field_unique_id]['id']
+                children_result = self.g.query(queries.field_children, initBindings={'Field' : field_initial_id})
+                if children_result:
+                    field_counter = 0
+                    for row in children_result:
+                        new_field_unique_id = field_unique_id + '.' + str(field_counter)
+                        field_counter += 1
+                        self.fields[field_unique_id]['children'].add(new_field_unique_id)
+                        self.fields.setdefault(new_field_unique_id, {'id': row.Child, 'parent': field_unique_id, 'name': None,
+                                                                 'children': set(), 'reference_formulation': None,
+                                                                 'iterator': None,
+                                                                 'iterable': False,  'reference': None, 'template': None, 'constant': None})
+                        add_field_details(new_field_unique_id)
+                        add_children(new_field_unique_id)
+
+            add_children(field_unique_id)
+
+        joins_per_view_results = self.g.query(queries.joins_per_view)
+        for row in joins_per_view_results:
+            self.logical_views[row.LogicalView]['joins'].add(row.Join)
             if self.optimize:
                 self.logical_views[row.LogicalView]['used_references'] = util.get_all_references_per_view(self.g,
                                                                                                           row.LogicalView)
@@ -142,6 +164,11 @@ class ViewToCsvConvertor:
                                               'join_conditions': {},
                                               'join_type': _join_type})
             self.joins[_row.Join]['fields'].add(_row.Field)
+            self.fields[row.Field] = {'id': row.Field, 'parent': field_unique_id, 'name': None,
+                                                                 'children': set(), 'reference_formulation': None,
+                                                                 'iterator': None,
+                                                                 'iterable': True}
+            add_field_details(row.Field)
             self.joins[_row.Join]['join_conditions'][_row.JoinCondition] = {'parent': _row.Parent.value,
                                                                             'child': _row.Child.value}
 
@@ -267,31 +294,27 @@ class ViewToCsvConvertor:
             siblings = list(siblings)
             new_field_parent = self.fields[siblings[0]]['parent']
             new_field_parent_reference_formulation = self.fields[new_field_parent]['reference_formulation']
+            new_field_parent_iterable = self.fields[new_field_parent]['iterable']
             fields_to_be_added_siblings, converted_fields = self.get_info_from_siblings(siblings, True)
             if fields_to_be_added_siblings:
                 fields_to_be_added = fields_to_be_added + fields_to_be_added_siblings
             new_field_parent_name = self.fields[new_field_parent]['name']
+            if new_field_parent_iterable:
             # the parent is an iterable JSON field
-            if 'JSONPath' in new_field_parent_reference_formulation:
-                # if iterator, first apply iterator to parent
-                #if self.fields[new_field_parent]['iterator']:
-                #    expr = jp.parse(self.fields[new_field_parent]['iterator'])
-                #    df[new_field_parent_name] = df[new_field_parent_name].apply(get_iterations_jsonpath, jsonpath=expr)
-                #    df[new_field_parent_name + '.#'] = df[new_field_parent_name].apply(add_iteration_index)
-                #    df = df.explode([new_field_parent_name, new_field_parent_name + '.#'])
-                for sibling in siblings:
-                    df = self.add_field_json(df, sibling)
+                if 'JSONPath' in new_field_parent_reference_formulation:
+                    for sibling in siblings:
+                        df = self.add_field_json(df, sibling)
 
-                def dump_if_not_str(x):
-                    if not isinstance(x, str):
-                        x = json.dumps(x)
-                    return x
+                    def dump_if_not_str(x):
+                        if not isinstance(x, str):
+                            x = json.dumps(x)
+                        return x
 
-                df[new_field_parent_name] = df[new_field_parent_name].apply(dump_if_not_str)
-            # the parent is an iterable csv field
-            if 'CSV' in new_field_parent_reference_formulation:
-                df = self.add_siblings_csv(df, siblings, new_field_parent)
-            if 'EXPRESSION' == new_field_parent_reference_formulation:
+                    df[new_field_parent_name] = df[new_field_parent_name].apply(dump_if_not_str)
+                # the parent is an iterable csv field
+                if 'CSV' in new_field_parent_reference_formulation:
+                    df = self.add_siblings_csv(df, siblings, new_field_parent)
+            else:
                 for sibling in siblings:
                     df = self.add_field_expression(df, sibling, new_field_parent_name)
             return self.add_fields(df, fields_to_be_added)
@@ -361,11 +384,6 @@ class ViewToCsvConvertor:
         fields_to_be_added = []
         for field in view_fields:
             df = self.add_field_json(df, field, False)
-            # field_name = self.fields[field]['name']
-            # jsonpath = jp.parse(self.fields[field]['reference'])
-            # df[field_name] = df['<it>'].apply(get_iterations_jsonpath, jsonpath=jsonpath)
-            # df[field_name + '.#'] = df[field_name].apply(add_iteration_index)
-            # df = df.explode([field_name, field_name + '.#'])
             if self.fields[field]['children']:
                 fields_to_be_added.append(self.fields[field]['children'])
         df = self.add_fields(df, fields_to_be_added)
@@ -438,7 +456,7 @@ class ViewToCsvConvertor:
                 self.g.add((source_node, RML2['null'], Literal("")))
         # remove view related triples
         for field in self.fields:
-            self.g.remove((field, None, None))
+            self.g.remove((self.fields[field]['id'], None, None))
         for join in self.joins:
             for join_condition in self.joins[join]['join_conditions']:
                 self.g.remove((join_condition, None, None))

@@ -1,0 +1,126 @@
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix moveUp: <http://moveUp.care/> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.com/ObservationTriplesMap> a rml:TriplesMap ;
+    rml:logicalSource <http://example.com/observationView> ;
+    rml:predicateObjectMap [ rml:objectMap [ rml:reference "status" ] ;
+            rml:predicate moveUp:status ],
+        [ rml:objectMap [ rml:parentTriplesMap <http://example.com/CategoryTriplesMap> ] ;
+            rml:predicate moveUp:category ],
+        [ rml:objectMap [ rml:parentTriplesMap <http://example.com/CodesTriplesMap> ] ;
+            rml:predicate moveUp:code ],
+        [ rml:objectMap [ rml:template "http://moveUp.com/patient/{subject}" ;
+                    rml:termType rml:IRI ] ;
+            rml:predicate moveUp:subject ],
+        [ rml:objectMap [ rml:datatype xsd:dateTime ;
+                    rml:reference "effectiveDateTime" ] ;
+            rml:predicate moveUp:effectiveDateTime ],
+        [ rml:objectMap [ rml:parentTriplesMap <http://example.com/ValueQuantityTriplesMap> ] ;
+            rml:predicate moveUp:valueQuantity ],
+        [ rml:objectMap [ rml:parentTriplesMap <http://example.com/ValueCodeableConceptTriplesMap> ] ;
+            rml:predicate moveUp:valueCodeableConcept ],
+        [ rml:objectMap [ rml:parentTriplesMap <http://example.com/PartOfTriplesMap> ] ;
+            rml:predicate moveUp:partOf ] ;
+    rml:subjectMap [ rml:class moveUp:Observation ;
+            rml:template "http://moveUp.com/id/{identifiers.system}/{identifiers.id}" ] .
+
+<http://example.com/json> a rml:LogicalSource ;
+    rml:iterator "$.[*]" ;
+    rml:referenceFormulation rml:JSONPath ;
+    rml:source [ a rml:RelativePathSource,
+                rml:Source ;
+            rml:path "observations.json" ;
+            rml:root rml:MappingDirectory ] .
+
+<http://example.com/CategoryCodingsTriplesMap> a rml:TriplesMap ;
+    rml:logicalSource <http://example.com/observationView> ;
+    rml:predicateObjectMap [ rml:objectMap [ rml:reference "categories.system" ;
+                    rml:termType rml:IRI ] ;
+            rml:predicate moveUp:system ],
+        [ rml:objectMap [ rml:reference "categories.code" ] ;
+            rml:predicate moveUp:code ],
+        [ rml:objectMap [ rml:reference "categories.display" ] ;
+            rml:predicate dct:description ] ;
+    rml:subjectMap [ rml:class moveUp:Coding ;
+            rml:template "{categories.system}/{categories.code}" ] .
+
+<http://example.com/CategoryTriplesMap> a rml:TriplesMap ;
+    rml:logicalSource <http://example.com/observationView> ;
+    rml:predicateObjectMap [ rml:objectMap [ rml:parentTriplesMap <http://example.com/CategoryCodingsTriplesMap> ] ;
+            rml:predicate moveUp:coding ] ;
+    rml:subjectMap [ rml:class moveUp:Category ;
+            rml:template "{identifiers.id}_category" ;
+            rml:termType rml:BlankNode ] .
+
+<http://example.com/CodeCodingsTriplesMap> a rml:TriplesMap ;
+    rml:logicalSource <http://example.com/observationView> ;
+    rml:predicateObjectMap [ rml:objectMap [ rml:reference "codes.system" ;
+                    rml:termType rml:IRI ] ;
+            rml:predicate moveUp:system ],
+        [ rml:objectMap [ rml:reference "codes.code" ] ;
+            rml:predicate moveUp:code ],
+        [ rml:objectMap [ rml:reference "codes.display" ] ;
+            rml:predicate dct:description ] ;
+    rml:subjectMap [ rml:class moveUp:Coding ;
+            rml:template "{codes.system}/{codes.code}" ] .
+
+<http://example.com/CodesTriplesMap> a rml:TriplesMap ;
+    rml:logicalSource <http://example.com/observationView> ;
+    rml:predicateObjectMap [ rml:objectMap [ rml:parentTriplesMap <http://example.com/CodeCodingsTriplesMap> ] ;
+            rml:predicate moveUp:coding ] ;
+    rml:subjectMap [ rml:class moveUp:Code ;
+            rml:template "{identifiers.id}_codes" ;
+            rml:termType rml:BlankNode ] .
+
+<http://example.com/PartOfTriplesMap> a rml:TriplesMap ;
+    rml:logicalSource <http://example.com/observationView> ;
+    rml:predicateObjectMap [ rml:objectMap [ rml:reference "partOfs.display" ] ;
+            rml:predicate dct:description ] ;
+    rml:subjectMap [ rml:template "http://moveUp.com/procedures/{partOfs.reference}" ] .
+
+<http://example.com/ValueCodeableConceptCodingtriplesMap> a rml:TriplesMap ;
+    rml:logicalSource <http://example.com/observationView> ;
+    rml:predicateObjectMap [ rml:objectMap [ rml:reference "valueCodeableConcept.system" ;
+                    rml:termType rml:IRI ] ;
+            rml:predicate moveUp:system ],
+        [ rml:objectMap [ rml:reference "valueCodeableConcept.code" ] ;
+            rml:predicate moveUp:code ],
+        [ rml:objectMap [ rml:reference "valueCodeableConcept.display" ] ;
+            rml:predicate dct:description ] ;
+    rml:subjectMap [ rml:class moveUp:Coding ;
+            rml:template "{valueCodeableConcept.system}/{valueCodeableConcept.code}" ] .
+
+<http://example.com/ValueCodeableConceptTriplesMap> a rml:TriplesMap ;
+    rml:logicalSource <http://example.com/observationView> ;
+    rml:predicateObjectMap [ rml:objectMap [ rml:reference "valueCodeableConcept.text" ] ;
+            rml:predicate dct:description ],
+        [ rml:objectMap [ rml:parentTriplesMap <http://example.com/ValueCodeableConceptCodingtriplesMap> ] ;
+            rml:predicate moveUp:coding ] ;
+    rml:subjectMap [ rml:class moveUp:ValueCodeableConcept ;
+            rml:template "{identifiers.id}_valueCodeableConcept" ;
+            rml:termType rml:BlankNode ] .
+
+<http://example.com/ValueQuantityTriplesMap> a rml:TriplesMap ;
+    rml:logicalSource <http://example.com/observationView> ;
+    rml:predicateObjectMap [ rml:objectMap [ rml:reference "valueQuantity.system" ] ;
+            rml:predicate moveUp:system ],
+        [ rml:objectMap [ rml:reference "valueQuantity.code" ] ;
+            rml:predicate moveUp:code ],
+        [ rml:objectMap [ rml:reference "valueQuantity.value" ] ;
+            rml:predicate moveUp:value ],
+        [ rml:objectMap [ rml:reference "valueQuantity.unit" ] ;
+            rml:predicate moveUp:unit ] ;
+    rml:subjectMap [ rml:class moveUp:ValueQuantitySystem ;
+            rml:template "{identifiers.id}-valueQuantity" ;
+            rml:termType rml:BlankNode ] .
+
+<http://example.com/observationView> a rml:LogicalSource ;
+    rml:referenceFormulation rml:CSV ;
+    rml:source [ a rml:RelativePathSource,
+                rml:Source ;
+            rml:null "" ;
+            rml:path "./view0.csv" ;
+            rml:root rml:MappingDirectory ] .
+

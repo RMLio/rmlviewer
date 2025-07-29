@@ -1,0 +1,1239 @@
+[
+  {
+    "resourceType": "QuestionnaireResponse",
+    "status": "completed",
+    "subject": {
+      "reference": "Patient/s7B7Jjr7ymt6QAeFB"
+    },
+    "partOf": [
+      {
+        "reference": "Procedure/gkXzyHiQ68TgNyEuo",
+        "display": "S1##0128865##PTKA##R##20240306"
+      }
+    ],
+    "authored": "2024-04-17T17:30:58.627Z",
+    "identifier": [
+      {
+        "system": "moveup-id",
+        "value": "7oNWqDq4rZCtPGK3B"
+      }
+    ],
+    "questionnaire": "Questionnaire/F4D2jyHT6BdiwscMX",
+    "text": "KNEE PROM collection week 6",
+    "item": [
+      {
+        "linkId": "ENkvWysY3AYPyTqy4",
+        "text": "KOOS",
+        "item": [
+          {
+            "linkId": "Symptoms",
+            "text": "Symptoms score",
+            "type": "decimal",
+            "answer": [
+              {
+                "valueDecimal": 46
+              }
+            ]
+          },
+          {
+            "linkId": "Pain",
+            "text": "Pain score",
+            "type": "decimal",
+            "answer": [
+              {
+                "valueDecimal": 39
+              }
+            ]
+          },
+          {
+            "linkId": "ADL",
+            "text": "ADL score",
+            "type": "decimal",
+            "answer": [
+              {
+                "valueDecimal": 40
+              }
+            ]
+          },
+          {
+            "linkId": "QoL",
+            "text": "QoL score",
+            "type": "decimal",
+            "answer": [
+              {
+                "valueDecimal": 31
+              }
+            ]
+          },
+          {
+            "linkId": "KOS10",
+            "text": "S1. Do you have swelling in your knee?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Sometimes"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOS21",
+            "text": "S2. Do you feel grinding, hear clicking or any other type of noise when your knee moves?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Sometimes"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KO S2",
+            "text": "S3. Does your knee catch or hang up when moving?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Often"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOS43",
+            "text": "S4. Can you straighten your knee fully?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Often"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOS54",
+            "text": "S5. Can you bend your knee fully?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Sometimes"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOS65",
+            "text": "S6. How severe is your knee joint stiffness after first wakening in the morning?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOS76",
+            "text": "S7. How severe is your knee stiffness after sitting, lying or resting later in the day?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOP17",
+            "text": "P1. How often do you experience knee pain?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Daily"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOP28",
+            "text": "P2. Twisting/pivoting on your knee",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOP39",
+            "text": "P3. Straightening knee fully",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOP410",
+            "text": "P4. Bending knee fully",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOP511",
+            "text": "P5. Walking on flat surface",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOP612",
+            "text": "P6. Going up or down stairs",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Mild"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOP713",
+            "text": "P7. At night while in bed",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOP814",
+            "text": "P8. Sitting or lying",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOP915",
+            "text": "P9. Standing upright",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA116",
+            "text": "A1. Descending stairs",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA217",
+            "text": "A2. Ascending stairs",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA318",
+            "text": "A3. Rising from sitting",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA419",
+            "text": "A4. Standing",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA520",
+            "text": "A5. Bending to floor/pick up an object",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA621",
+            "text": "A6. Walking on flat surface",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA722",
+            "text": "A7. Getting in/out of car",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA823",
+            "text": "A8. Going shopping",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "4",
+                  "display": "Extreme"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA924",
+            "text": "A9. Putting on socks/stockings",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA125",
+            "text": "A10. Rising from bed",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Mild"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA126",
+            "text": "A11. Taking off socks/stockings",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA127",
+            "text": "A12. Lying in bed (turning over, maintaining knee position)",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA128",
+            "text": "A13. Getting in/out of bath",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA129",
+            "text": "A14. Sitting",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA130",
+            "text": "A15. Getting on/off toilet",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA131",
+            "text": "A16. Heavy domestic duties (moving heavy boxes, scrubbing floors, etc.)",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "4",
+                  "display": "Extreme"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOA132",
+            "text": "A17. Light domestic duties (cooking, dusting, etc)",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KO Q33",
+            "text": "Q1. How often are you aware of your knee problem?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "4",
+                  "display": "Constantly"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOQ234",
+            "text": "Q2. Have you modified your life style to avoid potentially damaging activities to your knee?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Severely"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KO Q35",
+            "text": "Q3. How much are you troubled with lack of confidence in your knee?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Mildly"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KOQ436",
+            "text": "Q4. In general, how much difficulty do you have with your knee?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Severe"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "linkId": "MkSBgXBZRFgKnSk5T",
+        "text": "Oxford Knee Score",
+        "item": [
+          {
+            "linkId": "Oxford Knee Score /48",
+            "text": "Oxford Knee Score /48 score",
+            "type": "decimal",
+            "answer": [
+              {
+                "valueDecimal": 20
+              }
+            ]
+          },
+          {
+            "linkId": "OxHo0",
+            "text": "How would you describe the pain you have usually from your knee?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "4",
+                  "display": "Severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "OxHa1",
+            "text": "Have you had any trouble with washing and drying yourself all over because of your knee?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Very little trouble"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "OxHa2",
+            "text": "Have you had any trouble getting in and out of a car or using public transport because of your knee?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate trouble"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "OxFo3",
+            "text": "For how long have you been able to walk before the pain from your knee became severe (with or without a stick)?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "16-30 minutes"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "OxAf4",
+            "text": "After a meal (sat at a table) how painful has it been for you to stand up from a chair because of your knee?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderately painful"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "OxHa5",
+            "text": "Have you been limping when walking because of your knee?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Sometimes or just at first"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "OxIf6",
+            "text": "If you were to kneel down could you stand up afterwards?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "4",
+                  "display": "No, impossible"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "OxHa7",
+            "text": "Have you been troubled by pain from your knee in bed at night?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "4",
+                  "display": "Every night"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "OxLa8",
+            "text": "How much pain from your knee interfered with your usual work (including housework)?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Greatly"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "OxHa9",
+            "text": "Have you felt that your knee might suddenly give way or let you down?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Sometimes or just at first"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "OxHa10",
+            "text": "Have you been able to do your own household shopping on your own?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "4",
+                  "display": "No, impossible"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "OxHa11",
+            "text": "Have you been able to walk down a flight of stairs?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "With little difficulty"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "linkId": "agpddbxKWaKPC2MMq",
+        "text": "Knee Society Score",
+        "item": [
+          {
+            "linkId": "Symptoms Subscore (/25) ",
+            "text": "Symptoms Subscore (/25)  score",
+            "type": "decimal",
+            "answer": [
+              {
+                "valueDecimal": 13
+              }
+            ]
+          },
+          {
+            "linkId": "Patient Satisfaction Subscore (/40)",
+            "text": "Patient Satisfaction Subscore (/40) score",
+            "type": "decimal",
+            "answer": [
+              {
+                "valueDecimal": 12
+              }
+            ]
+          },
+          {
+            "linkId": "Patient Expectations Subscore (/15)",
+            "text": "Patient Expectations Subscore (/15) score",
+            "type": "decimal",
+            "answer": [
+              {
+                "valueDecimal": 6
+              }
+            ]
+          },
+          {
+            "linkId": "Functional Activities: Walking and standing - Temporary (/30)",
+            "text": "Functional Activities: Walking and standing - Temporary (/30) score",
+            "type": "decimal",
+            "answer": [
+              {
+                "valueDecimal": 18
+              }
+            ]
+          },
+          {
+            "linkId": "Functional Activities: Standard activities (ADL) (/30)",
+            "text": "Functional Activities: Standard activities (ADL) (/30) score",
+            "type": "decimal",
+            "answer": [
+              {
+                "valueDecimal": 17
+              }
+            ]
+          },
+          {
+            "linkId": "Functional Activities: Advanced activities (/25) ",
+            "text": "Functional Activities: Advanced activities (/25)  score",
+            "type": "decimal",
+            "answer": [
+              {
+                "valueDecimal": 1
+              }
+            ]
+          },
+          {
+            "linkId": "Functional Activities: Discretionary activities (Top 3 activities) (/15) ",
+            "text": "Functional Activities: Discretionary activities (Top 3 activities) (/15)  score",
+            "type": "decimal",
+            "answer": [
+              {
+                "valueDecimal": 3
+              }
+            ]
+          },
+          {
+            "linkId": "Functional activities: Total subscore  - Temporary (/100)",
+            "text": "Functional activities: Total subscore  - Temporary (/100) score",
+            "type": "decimal",
+            "answer": [
+              {
+                "valueDecimal": 39
+              }
+            ]
+          },
+          {
+            "linkId": "KnDo0",
+            "text": "Do you have pain with level walking?",
+            "type": "number",
+            "answer": [
+              {
+                "valueDecimal": 0.45
+              }
+            ]
+          },
+          {
+            "linkId": "KnDo1",
+            "text": "Do you have pain with stairs or inclines?",
+            "type": "number",
+            "answer": [
+              {
+                "valueDecimal": 0.82
+              }
+            ]
+          },
+          {
+            "linkId": "KnDo2",
+            "text": "Does your knee feel \"normal\" to you?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Never"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnCu3",
+            "text": "Currently, how satisfied are you with the pain level of your knee while sitting?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Dissatisfied"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnCu4",
+            "text": "Currently, how satisfied are you with the pain level of your knee while lying in bed?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Dissatisfied"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnCu5",
+            "text": " Currently, how satisfied are you with your knee function while getting out of bed?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Neutral"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnCu6",
+            "text": "Currently, how satisfied are you with your knee function while performing light household duties?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Dissatisfied"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnCu7",
+            "text": "Currently, how satisfied are you with your knee function while performing leisure recreational activities?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Dissatisfied"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnMy12",
+            "text": "Compared to what you expected before your knee replacement:",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Too high - I'm somewhat worse than I thought"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnMy13",
+            "text": "Compared to what you expected before your knee replacement:",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Too high - I'm somewhat worse than I thought"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnMy14",
+            "text": "Compared to what you expected before your knee replacement:",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Too high - I'm somewhat worse than I thought"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnCa15",
+            "text": "Can you walk without any aids (such as a cane, crutches or wheelchair)?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "0",
+                  "display": "Yes"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnI16",
+            "text": " If no, which of the following aid(s) do you use?",
+            "type": "open-choice",
+            "answer": []
+          },
+          {
+            "linkId": "KnDo17",
+            "text": "Do you use these aid(s) because of your knees?",
+            "type": "choice",
+            "answer": []
+          },
+          {
+            "linkId": "KnFo18",
+            "text": "For how long can you stand (with or without aid) before sitting due to knee discomfort?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "16-30 min"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnCo19",
+            "text": "For how long can you walk (with or without aid) before stopping due to knee discomfort?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "16-30 min"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnWa20",
+            "text": "Walking on an uneven surface",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnTu21",
+            "text": "Turning or pivoting on your leg",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnCl22",
+            "text": "Climbing up or down a flight of stairs",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Slight"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnGe23",
+            "text": "Getting up from a low couch or chair without arms",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnGe24",
+            "text": "Getting into or out of a car",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnMo25",
+            "text": "Moving laterally (stepping to the side)",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "2",
+                  "display": "Moderate"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnCl26",
+            "text": "Climbing a ladder or a step stool",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "5",
+                  "display": "Cannot do (because of knee)"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnCa27",
+            "text": "Carrying a shopping bag for a block",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "4",
+                  "display": "Very severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnSq28",
+            "text": "Squatting",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "5",
+                  "display": "Cannot do (because of knee)"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnKn29",
+            "text": "Kneeling",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "5",
+                  "display": "Cannot do (because of knee)"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnRu30",
+            "text": "Running",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "5",
+                  "display": "Cannot do (because of knee)"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnPI31",
+            "text": "Please check 3 of the activities below that you consider most important to you.",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Gardening"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnPI32",
+            "text": "Please check 3 of the activities below that you consider most important to you.",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "6",
+                  "display": "Distance Walking"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnPI33",
+            "text": "Please check 3 of the activities below that you consider most important to you.",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "16",
+                  "display": "Aerobic Exercises"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnHo32",
+            "text": "How much does your knee bother you during your first selected activity?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "3",
+                  "display": "Severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnHo33",
+            "text": "How much does your knee bother you during your second selected activity?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "4",
+                  "display": "Very severe"
+                }
+              }
+            ]
+          },
+          {
+            "linkId": "KnHo34",
+            "text": "How much does your knee bother you during your third selected activity?",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "5",
+                  "display": "Cannot do (because of knee)"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "linkId": "hWnpRNZiC4TorK5Yk",
+        "text": "UCLA Activity Score",
+        "item": [
+          {
+            "linkId": "Ucla1",
+            "text": "Check one box that describes your current activity level",
+            "type": "choice",
+            "answer": [
+              {
+                "valueCoding": {
+                  "code": "1",
+                  "display": "Mostly inactive or restricted to minimum activities of daily living"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

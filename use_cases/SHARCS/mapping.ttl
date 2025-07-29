@@ -1,0 +1,190 @@
+@base <http://example.com/>.
+@prefix r3d: <http://www.re3data.org/schema/3-0#>.
+@prefix dct: <http://purl.org/dc/terms/>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix r2r: <http://www4.wiwiss.fu-berlin.de/bizer/r2r/>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix rml: <http://w3id.org/rml/>.
+@prefix moveUp: <http://moveUp.care/>.
+@prefix moveUpQuest: <http://moveUp.care/questionnaire/>.
+
+<jsonView> a rml:LogicalView;
+  rml:viewOn <json>;
+  rdfs:label "Top level view";
+  rml:field [
+    rml:fieldName "patientId";
+    rml:reference "$.subject.reference";
+  ];
+  rml:field [
+    rml:fieldName "status";
+    rml:reference "$.status";
+  ];
+  rml:field [
+    rml:fieldName "identifiers";
+    rml:iterator "$.identifier[*]";
+    rml:field [
+      rml:fieldName "responseSystem";
+      rml:reference "$.system";
+    ];
+    rml:field [
+      rml:fieldName "responseId";
+      rml:reference "$.value";
+    ];
+  ];
+  rml:field [
+    rml:fieldName "questionnaireId";
+    rml:reference "$.questionnaire";
+  ];
+  rml:field [
+    rml:fieldName "questionnaireLabel";
+    rml:reference "$.text";
+  ];
+  rml:field [
+    rml:fieldName "creationDate";
+    rml:reference "$.authored";
+  ];
+  rml:field [
+    rdfs:label "Loop through each question group (KOOS, OXFORD, etc...) ";
+    rml:fieldName "sections";
+    rml:iterator "$.item[*]";
+    rml:field [
+      rml:fieldName "id";
+      rml:reference "$.linkId";
+    ];
+    rml:field [
+      rml:fieldName "label";
+      rml:reference "$.text";
+    ];
+    rml:field [
+      rdfs:label "Loop through each question";
+      rml:fieldName "questions";
+      rml:iterator "$.item[*]";
+      rml:field [
+        rml:fieldName "id";
+        rml:reference "$.linkId";
+      ];
+      rml:field [
+        rml:fieldName "label";
+        rml:reference "$.text";
+      ];
+      rml:field [
+        rml:fieldName "type";
+        rml:reference "$.type";
+      ];
+      rml:field [
+        rdfs:label "Loop through the answers for each question";
+        rml:fieldName "answers";
+        rml:iterator "$.answer[*]";
+        rml:field [
+          rml:fieldName "display";
+          rml:reference "$.valueCoding.display";
+        ];
+        rml:field [
+          rml:fieldName "ansCode";
+          rml:reference "$.valueCoding.code";
+        ];
+        rml:field [
+          rml:fieldName "ansDecimal";
+          rml:reference "$.valueDecimal";
+        ];
+      ];
+    ];
+  ].
+
+<json> a rml:LogicalSource;
+  rml:source [ rml:path "questionnaireResponse.json"; rml:root rml:MappingDirectory] ;
+  rml:iterator "$.[*]";
+  rml:referenceFormulation rml:JSONPath.
+
+<PatientTriplesMap> a rml:TriplesMap;
+  rml:logicalSource <jsonView>;
+  rml:subjectMap [ rml:template "http://moveUp.care/patient/{patientId}" ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:hasQuestionnaireResponse;
+    rml:objectMap [ rml:parentTriplesMap <ResponseTriplesMap> ];
+  ].
+
+<ResponseTriplesMap> a rml:TriplesMap;
+  rml:logicalSource <jsonView>;
+  rml:subjectMap [ rml:template "http://moveUp.care/responses/{identifiers.responseSystem}-{identifiers.responseId}" ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:status;
+    rml:objectMap [ rml:reference "status" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate dct:created;
+    rml:objectMap [ rml:reference "creationDate" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:isResponseFor;
+    rml:objectMap [ rml:parentTriplesMap <QuestionnaireTriplesMap> ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:hasAnswer;
+    rml:objectMap [ rml:parentTriplesMap <AnswerTriplesMap> ];
+  ].
+
+<QuestionnaireTriplesMap> a rml:TriplesMap;
+  rml:logicalSource <json>;
+  rml:subjectMap [ rml:template "http://moveUp.care/questionnaires/{questionnaireId}" ];
+  rml:predicateObjectMap [
+    rml:predicate rdfs:label;
+    rml:objectMap [ rml:reference "questionnaireLabel" ];
+  ].
+
+<AnswerTriplesMap> a rml:TriplesMap;
+  rml:logicalSource <json>;
+  rml:subjectMap [ rml:template "http://moveUp.care/responses/{identifiers.responseSystem}-{identifiers.responseId}/answer/{questionnaireId}-{sections.id}-{sections.questions.id}" ];
+  rml:predicateObjectMap [
+    rml:predicate rdfs:label;
+    rml:objectMap [ rml:reference "sections.questions.answers.display" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:answerType;
+    rml:objectMap [ rml:reference "sections.questions.type" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:answerValue;
+    rml:objectMap [ rml:reference "sections.questions.answers.ansCode" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:answerValue;
+    rml:objectMap [
+      rml:reference "sections.questions.answers.ansDecimal";
+      rml:datatype xsd:decimal;
+    ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:question;
+    rml:objectMap [ rml:parentTriplesMap <QuestionTriplesMap> ];
+  ].
+
+<QuestionTriplesMap> a rml:TriplesMap;
+  rml:logicalSource <json>;
+  rml:subjectMap [ rml:template "http://moveUp.care/question/{sections.id}-{sections.questions.id}" ];
+  rml:predicateObjectMap [
+    rml:predicate rdfs:label;
+    rml:objectMap [ rml:reference "sections.questions.label" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:questionType;
+    rml:objectMap [ rml:reference "sections.questions.type" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:partOfSection;
+    rml:objectMap [ rml:parentTriplesMap <SectionsTriplesMap> ];
+  ].
+
+<SectionsTriplesMap> a rml:TriplesMap;
+  rml:logicalSource <json>;
+  rml:subjectMap [ rml:template "http://moveUp.care/sections/{sections.id}" ];
+  rml:predicateObjectMap [
+    rml:predicate rdfs:label;
+    rml:objectMap [ rml:reference "sections.label" ];
+  ];
+  rml:predicateObjectMap [
+    rml:predicate moveUp:partOfQuestionnaire;
+    rml:objectMap [ rml:parentTriplesMap <QuestionnaireTriplesMap> ];
+  ].
+
