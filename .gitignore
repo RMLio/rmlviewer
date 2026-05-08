@@ -4,3 +4,4 @@ venv/
 output/
 output_old_rml/
 *.jar
+test_cases/result.md
