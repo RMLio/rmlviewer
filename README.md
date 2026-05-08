@@ -21,7 +21,7 @@ All logical views are converted to logical sources with JSON files as source.
 These JSON files are the materialization of the original logical views.  
 The new mapping file together with the original input data and the newly generated JSON files can be processed by any RML mapping engine that supports JSON source data.  
 
-Compared to the initial `RML-view-to-CSV` version (till v1.1.0), the legacy options `--optimize` and `--no_ref_object_map` are currently not supported in `RMLViewer`.
+Compared to the initial `RML-view-to-CSV` version (till v1.2.0), the legacy options `--optimize` and `--no_ref_object_map` are currently not supported in `RMLViewer`.
 
 ```text
 usage: rmlviewer.py [-h] [--version] [--mapping MAPPING] [--output_dir OUTPUT_DIR]
