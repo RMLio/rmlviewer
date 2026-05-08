@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.0.0] - 2026-05-08
+
+### Fixed
+
+- Duplicate field name error
+
+### Added
+
+- Support for expression maps in fields
+- Natural datatype mapping
+
+### Changed
+
+- Removed support for initial RML (rmlio)
+- Removed option --no_ref_object_map (with intention to reintroduce in future)
+- Removed option --optimize (with intention to reintroduce in future)
+
 ## [1.2.0] - 2026-05-08
 
 ### Fixed
