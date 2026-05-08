@@ -1,0 +1,75 @@
+@prefix : <http://example.com/> .
+@prefix fx: <http://sparql.xyz/facade-x/ns/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rml: <http://w3id.org/rml/> .
+@prefix xyz: <http://sparql.xyz/facade-x/data/> .
+
+:ls1 a rml:LogicalSource ;
+    rml:referenceFormulation rml:CSV ;
+    rml:source [ a rml:RelativePathSource,
+                rml:Source ;
+            rml:path "some.csv" ;
+            rml:root rml:MappingDirectory ] .
+
+:tm1 a rml:TriplesMap ;
+    rml:logicalSource :lv1 ;
+    rml:predicateObjectMap [ a rml:PredicateObjectMap ;
+            rml:objectMap :tm1-2 ;
+            rml:predicateMap :tm1-1 ],
+        [ a rml:PredicateObjectMap ;
+            rml:objectMap [ a rml:ObjectMap,
+                        rml:TermMap ;
+                    rml:reference "$['#']" ;
+                    rml:termType rml:BlankNode ] ;
+            rml:predicateMap [ a rml:PredicateMap,
+                        rml:TermMap ;
+                    rml:template "http://www.w3.org/1999/02/22-rdf-syntax-ns#_{$['#']}" ] ] ;
+    rml:subjectMap [ a rml:SubjectMap,
+                rml:TermMap ;
+            rml:template "lv1" ;
+            rml:termType rml:BlankNode ] .
+
+:tm2 a rml:TriplesMap ;
+    rml:logicalSource :lv1 ;
+    rml:predicateObjectMap [ a rml:PredicateObjectMap ;
+            rml:objectMap [ a rml:ObjectMap,
+                        rml:TermMap ;
+                    rml:reference "$['name']" ] ;
+            rml:predicateMap [ a rml:PredicateMap,
+                        rml:TermMap ;
+                    rml:constant xyz:name ] ],
+        [ a rml:PredicateObjectMap ;
+            rml:objectMap [ a rml:ObjectMap,
+                        rml:TermMap ;
+                    rml:reference "$['id']" ] ;
+            rml:predicateMap [ a rml:PredicateMap,
+                        rml:TermMap ;
+                    rml:constant xyz:id ] ],
+        [ a rml:PredicateObjectMap ;
+            rml:objectMap [ a rml:ObjectMap,
+                        rml:TermMap ;
+                    rml:reference "$['height_inches']" ] ;
+            rml:predicateMap [ a rml:PredicateMap,
+                        rml:TermMap ;
+                    rml:constant xyz:height_inches ] ] ;
+    rml:subjectMap [ a rml:SubjectMap,
+                rml:TermMap ;
+            rml:reference "$['#']" ;
+            rml:termType rml:BlankNode ] .
+
+:tm1-1 a rml:PredicateMap,
+        rml:TermMap ;
+    rml:constant rdf:type .
+
+:tm1-2 a rml:ObjectMap,
+        rml:TermMap ;
+    rml:constant fx:root .
+
+:lv1 a rml:LogicalSource ;
+    rml:iterator "$[*]" ;
+    rml:referenceFormulation rml:JSONPath ;
+    rml:source [ a rml:RelativePathSource,
+                rml:Source ;
+            rml:path "./view1.json" ;
+            rml:root rml:MappingDirectory ] .
+

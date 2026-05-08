@@ -1,0 +1,6 @@
+<http://example.org/person/0> <http://example.org/hasId> "10" .
+<http://example.org/person/0> <http://example.org/hasName> "A" .
+
+<http://example.org/person/1> <http://example.org/hasId> "20" .
+<http://example.org/person/1> <http://example.org/hasName> "B" .
+

@@ -1,0 +1,113 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "debugpy",
+            "request": "launch",
+            "name": "test.sh",
+            "program": "${workspaceFolder}/src/view_to_json.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mapping",
+                "mapping_n.ttl",
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}/test_cases_lv/RMLLVTC0006a",
+        },
+        {
+            "type": "debugpy",
+            "request": "launch",
+            "name": "6a",
+            "program": "${workspaceFolder}/src/view_to_json.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mapping",
+                "mapping_n.ttl",
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}/test_cases_lv/RMLLVTC0006a",
+        },
+        {
+            "type": "debugpy",
+            "request": "launch",
+            "name": "1c",
+            "program": "${workspaceFolder}/src/view_to_json.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mapping",
+                "mapping_n.ttl",
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}/test_cases_lv/RMLLVTC0001c",
+        },
+        {
+            "type": "debugpy",
+            "request": "launch",
+            "name": "3b",
+            "program": "${workspaceFolder}/src/view_to_json.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mapping",
+                "mapping_n.ttl",
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}/test_cases_lv/RMLLVTC0003b",
+        },
+        {
+            "type": "debugpy",
+            "request": "launch",
+            "name": "2a",
+            "program": "${workspaceFolder}/src/view_to_json.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mapping",
+                "mapping_n.ttl",
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}/test_cases_lv/RMLLVTC0002a",
+        },
+        {
+            "type": "debugpy",
+            "request": "launch",
+            "name": "6b",
+            "program": "${workspaceFolder}/src/view_to_json.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mapping",
+                "mapping.ttl",
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}/test_cases_lv/RMLLVTC0006g",
+        },
+        {
+            "type": "debugpy",
+            "request": "launch",
+            "name": "2c",
+            "program": "${workspaceFolder}/src/view_to_json.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mapping",
+                "mapping_n.ttl",
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "cwd": "${workspaceFolder}/test_cases_lv/RMLLVTC0002c",
+        }
+    ]
+}

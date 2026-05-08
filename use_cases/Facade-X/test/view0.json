@@ -1,0 +1,29 @@
+[
+    {
+        "#":0,
+        "height_inches":"66",
+        "height_inches.#":0,
+        "name":"alice",
+        "name.#":0,
+        "id":"5",
+        "id.#":0
+    },
+    {
+        "#":1,
+        "height_inches":"67",
+        "height_inches.#":0,
+        "name":"fred",
+        "name.#":0,
+        "id":"2",
+        "id.#":0
+    },
+    {
+        "#":2,
+        "height_inches":"73",
+        "height_inches.#":0,
+        "name":"william",
+        "name.#":0,
+        "id":"9",
+        "id.#":0
+    }
+]
