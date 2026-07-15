@@ -8,6 +8,7 @@ import re
 
 from namespaces import *
 import algorithm 
+from util import resolve_source_path
 
 def split(template):
     # Find constants and references using regex
@@ -45,17 +46,19 @@ def read_source(source_path):
         source_value = f.read()  
     return source_value
 
-def get_source_and_root_query(ls, g):
+def get_source_and_root_query(ls, g, mapping_dir=None):
     ## add this moment only support to rml:FilePath source and logical view
     reference_formulation = g.value(ls, RML['referenceFormulation'])
     if reference_formulation != None: 
         source_access = g.value(ls, RML['source'])
+        source_root = g.value(source_access, RML['root'])
         source_path = g.value(source_access, RML['path'])
-        source = read_source(source_path)
+        resolved_source_path = resolve_source_path(str(source_path), source_root, mapping_dir)
+        source = read_source(resolved_source_path)
         query = g.value(ls, RML['iterator'])
     else: 
         reference_formulation = RML['LV']
-        source = algorithm.translate_view(ls, g)
+        source = algorithm.translate_view(ls, g, mapping_dir)
         query = None    
     return (reference_formulation, source, query)
 

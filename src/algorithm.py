@@ -8,9 +8,9 @@ def validate_new_field_name(df, field_attribute, context):
     if field_attribute in df.columns:
         raise ValueError(f"Duplicate field name '{field_attribute}' in {context}.")
 
-def translate_view(lv, g) -> pd.DataFrame:
+def translate_view(lv, g, mapping_dir=None) -> pd.DataFrame:
     ls = g.value(lv, RML['viewOn'])
-    (reference_formulation, source, query) = get_source_and_root_query(ls, g)
+    (reference_formulation, source, query) = get_source_and_root_query(ls, g, mapping_dir)
     df = base_source(reference_formulation, source, query)
     function = lambda x: to_index(x['<it>'])
     df = extend(df, function, '#')
@@ -22,10 +22,10 @@ def translate_view(lv, g) -> pd.DataFrame:
     df = df.drop(columns=['<it>'])
     left_joins = g.objects(lv, RML['leftJoin'])
     for left_join in left_joins:
-        df = add_join(left_join, df, g, 'left')
+        df = add_join(left_join, df, g, 'left', mapping_dir)
     inner_joins = g.objects(lv, RML['innerJoin'])
     for inner_join in inner_joins:
-        df = add_join(inner_join, df, g, 'inner')
+        df = add_join(inner_join, df, g, 'inner', mapping_dir)
     return df
 
 def add_field(field, field_attribute, source_reference_formulation, source_attribute, df, g):
@@ -62,9 +62,9 @@ def create_ext_expr_field(field, source_reference_formulation, source_attribute,
         template_str = template.value
         return lambda x: convert_template(source_reference_formulation, source_function(x), template_str)
 
-def add_join(join, df, g, join_type='left'):
+def add_join(join, df, g, join_type='left', mapping_dir=None):
     parent_logical_view = g.value(join, RML['parentLogicalView'])
-    (reference_formulation, source, query) = get_source_and_root_query(parent_logical_view, g)
+    (reference_formulation, source, query) = get_source_and_root_query(parent_logical_view, g, mapping_dir)
     dfp = base_source(reference_formulation, source, query)
     dfp = flatten(dfp, '<it>')
     child_attributes = df.columns.tolist()

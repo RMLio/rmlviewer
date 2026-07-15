@@ -2,22 +2,25 @@ import pandas as pd
 from namespaces import *
 from functions import *
 from operators import *
+from util import resolve_source_path
 #with additional algorithm for extend expression on top of logical views
 #kept as archive for further reference, but not used in the main codebase, as it is not fully developed and tested yet
-def translate_view(lv, g) -> pd.DataFrame:
+def translate_view(lv, g, mapping_dir=None) -> pd.DataFrame:
     ls = g.value(lv, RML['viewOn'])
     reference_formulation = g.value(ls, RML['referenceFormulation'])
     df = pd.DataFrame()
     if reference_formulation:
         source = g.value(ls, RML['source'])
+        source_root = g.value(source, RML['root'])
         source_path = g.value(source, RML['path'])
         query = g.value(ls, RML['iterator'])
         # base source can be reused for resolving logical sources in general, outside logical views
-        source_value = read_source(source_path)
+        resolved_source_path = resolve_source_path(str(source_path), source_root, mapping_dir)
+        source_value = read_source(resolved_source_path)
         df['<it>'] = [get_iterations(reference_formulation, source_value, query)]
      #   df = base_source(source_path, reference_formulation, query1)
     else: 
-        dfs = translate_view(ls, g)
+        dfs = translate_view(ls, g, mapping_dir)
         df['<it>'] = [dfs.to_dict(orient='records')]
         reference_formulation = RML['LV']
     function = lambda x: to_index(x['<it>'])
@@ -31,10 +34,10 @@ def translate_view(lv, g) -> pd.DataFrame:
     df = df.drop(columns=['<it>'])
     left_joins = g.objects(lv, RML['leftJoin'])
     for left_join in left_joins:
-        df = add_join(left_join, df, g, 'left')
+        df = add_join(left_join, df, g, 'left', mapping_dir)
     inner_joins = g.objects(lv, RML['innerJoin'])
     for inner_join in inner_joins:
-        df = add_join(inner_join, df, g, 'inner')
+        df = add_join(inner_join, df, g, 'inner', mapping_dir)
     return df
 
 def add_field(field, field_attribute, source_reference_formulation, source_function, df, g):
@@ -70,9 +73,9 @@ def create_ext_expr_field(field, source_reference_formulation, source_function, 
         template_str = template.value
         return lambda x: convert_template(source_reference_formulation, source_function(x), template_str)
 
-def add_join(join, df, g, join_type='left'):
+def add_join(join, df, g, join_type='left', mapping_dir=None):
     parent_logical_view = g.value(join, RML['parentLogicalView'])
-    dfp = translate_view(parent_logical_view, g)
+    dfp = translate_view(parent_logical_view, g, mapping_dir)
     child_attributes = df.columns.tolist()
     parent_attributes = []
     source_function = lambda x: x

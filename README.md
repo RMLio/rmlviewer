@@ -21,6 +21,8 @@ All logical views are converted to logical sources with JSON files as source.
 These JSON files are the materialization of the original logical views.  
 The new mapping file together with the original input data and the newly generated JSON files can be processed by any RML mapping engine that supports JSON source data.  
 
+The following source path semantics are implemented: when `rml:root` is set to `rml:MappingDirectory`, relative `rml:path` values are resolved against the mapping file directory; when `rml:root` is omitted, relative paths are resolved against the current working directory.
+
 Compared to the initial `RML-view-to-CSV` version (till v1.2.0), the legacy options `--optimize` and `--no_ref_object_map` are currently not supported in `RMLViewer`.
 
 ```text

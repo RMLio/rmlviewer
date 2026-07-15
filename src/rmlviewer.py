@@ -240,6 +240,7 @@ class ViewConvertor:
             Directory to which the output is saved
         """
         self.mapping = resolve_path(mapping)
+        self.mapping_dir = os.path.dirname(os.path.abspath(self.mapping))
         self.materialized_logical_views = {}
         self.output_dir = resolve_path(output_dir, True)
 
@@ -248,13 +249,13 @@ class ViewConvertor:
         df.to_json(filename, orient="records", indent=4)
         self.materialized_logical_views[lv] = filename
 
-    def algorithm1(self, g):
+    def algorithm1(self, g, mapping_dir=None):
         triplesmaps = g.subjects(RML['subjectMap'], None)  # no poMap because can be more than one and poMap is not always required                   
         for tm in triplesmaps:
             ls = g.value(tm, RML['logicalSource'])
             is_lv = any(g.triples((ls, RML['viewOn'], None)))
             if is_lv:
-                df = translate_view(ls, g)
+                df = translate_view(ls, g, mapping_dir)
                 self.materialize(ls, df)    
                     
     def rewrite_mapping(self, g): 
@@ -335,7 +336,7 @@ class ViewConvertor:
         # Normalize the RML mapping to expanded form
         normalize_rml_kgc(g)
         
-        self.algorithm1(g)
+        self.algorithm1(g, self.mapping_dir)
         self.rewrite_mapping(g)        
     
 
