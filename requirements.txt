@@ -1,4 +1,4 @@
-jsonpath_ng==1.6.0
+jsonpath_ng==1.8.0
 pandas==2.2.3
 rdflib==7.0.0
 lxml==6.0.2

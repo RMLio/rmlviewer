@@ -2,7 +2,7 @@ from io import StringIO
 import csv
 from itertools import product
 import json
-import jsonpath_ng as jp
+import jsonpath_ng.ext as jp
 from lxml import etree
 import re 
 

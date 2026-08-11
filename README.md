@@ -48,7 +48,7 @@ options:
 ## Supported data formats
 
 - CSV
-- JSON
+- JSON (standard JSONPath references, plus several [extensions](https://github.com/h2non/jsonpath-ng/#extensions))
 - XML
 
 ## Examples
